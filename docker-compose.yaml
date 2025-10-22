@@ -1,0 +1,41 @@
+services:
+  mysql_db:
+    image: mysql:latest
+    container_name: mysql_db
+    restart: always
+    env_file:
+      - ./.env
+    ports:
+      - '3307:3306'
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+  app:
+    build: .
+    container_name: app_backend
+    env_file:
+      - ./.env
+    ports:
+      - '3000:3000'
+    depends_on:
+      - mysql_db
+    networks:
+      - app-network
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin
+    restart: always
+    env_file:
+      - ./.env
+    ports:
+      - '8080:80'
+    depends_on:
+      - mysql_db
+    networks:
+      - app-network
+volumes:
+  mysql-data:
+networks:
+  app-network:
+    driver: bridge
