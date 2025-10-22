@@ -6,6 +6,7 @@ const connection = mysql.createPool({
   host: process.env.DB_HOST || 'mysql_db',
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || 'test_password',
+  database: process.env.DB_NAME || 'autoservicio_db',
   port: process.env.DB_PORT || 3306
 });
 
@@ -21,7 +22,7 @@ app.get('/health', (req, res) => {
 // Test BD
 app.get('/api/test-db', async (req, res) => {
   try {
-    const [rows] = await connection.query('SELECT 1 + 1 AS result');
+    const [rows] = await connection.query('SELECT * FROM tipos');
     console.log('✅ Conexión exitosa:', rows);
     res.json({ message: 'Conexión exitosa', data: rows });
   } catch (error) {

@@ -4,7 +4,7 @@ services:
     container_name: mysql_db
     restart: always
     env_file:
-      - ./.env
+      - ./.env.docker
     ports:
       - '3307:3306'
     volumes:
@@ -15,7 +15,7 @@ services:
     build: .
     container_name: app_backend
     env_file:
-      - ./.env
+      - ./.env.docker
     ports:
       - '3000:3000'
     depends_on:
@@ -27,7 +27,7 @@ services:
     container_name: phpmyadmin
     restart: always
     env_file:
-      - ./.env
+      - ./.env.docker
     ports:
       - '8080:80'
     depends_on:
