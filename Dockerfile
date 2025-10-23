@@ -1,6 +1,6 @@
 FROM node:24-alpine3.22
 
-WORKDIR /docker-node-mysql
+WORKDIR /autoservicio_api
 
 COPY package*.json ./
 
