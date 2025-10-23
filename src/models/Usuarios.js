@@ -31,8 +31,6 @@ const UsuarioModel = {
   },
   delete: async (id) => {
     const result = await pool.query('DELETE FROM usuarios WHERE id = ?', [id]);
-    console.log("🚀 ~ result:", result)
-
     return result;
   }
 };
