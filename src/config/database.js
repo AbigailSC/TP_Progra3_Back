@@ -7,6 +7,8 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME || 'autoservicio_db',
   port: process.env.DB_PORT || 3306,
   waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
 export default pool;

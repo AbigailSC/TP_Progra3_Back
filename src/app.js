@@ -1,6 +1,7 @@
 import express from 'express';
 
 import tipoRoutes from './routes/tipoRoutes.js';
+import usuarioRoutes from './routes/usuarioRouter.js';
 
 const app = express();
 
@@ -12,5 +13,6 @@ app.get('/health', (req, res) => {
 });
 
 app.use('/api/tipos', tipoRoutes);
+app.use('/api/usuarios', usuarioRoutes);
 
 export default app;

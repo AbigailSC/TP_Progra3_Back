@@ -1,11 +1,14 @@
 import pool from '../config/database.js';
 
-export const getAll = async () => {
+const TipoModel = {
+  getAll: async () => {
   const [results] = await pool.query('SELECT * FROM tipos');
   return results;
-};
-
-export const getById = async (id) => {
+  },
+  getById: async (id) => {
   const [results] = await pool.query('SELECT * FROM tipos WHERE id = ?', [id]);
   return results[0];
+  }
 };
+
+export default TipoModel;
