@@ -1,4 +1,5 @@
 import UsuarioModel from "../models/Usuarios.js";
+import { hashPassword } from "../utils/passwordUtils.js";
 
 export const getAllUsuarios = async (req, res, next) => {
   try {
@@ -20,8 +21,8 @@ export const getAllUsuarios = async (req, res, next) => {
 };
 
 export const getUsuarioById = async (req, res, next) => {
-  const { id } = req.params;
   try {
+    const { id } = req.params;
     const usuario = await UsuarioModel.getById(id);
     if (!usuario) {
       return res.status(404).json({
@@ -38,30 +39,10 @@ export const getUsuarioById = async (req, res, next) => {
   }
 }
 
-export const createUsuario = async (req, res, next) => {
-  const usuarioData = req.body;
-  try {
-    const userExists = await UsuarioModel.getByEmail(usuarioData.email);
-    if (userExists) {
-      return res.status(400).json({
-        status: 400,
-        message: 'El correo electrónico ya está en uso'
-      });
-    }
-    const newUsuario = await UsuarioModel.create(usuarioData);
-    res.status(201).json({
-      status: 201,
-      data: newUsuario
-    });
-  } catch (error) {
-    next(error);
-  }
-}
-
 export const updateUsuario = async (req, res, next) => {
-  const { id } = req.params;
-  const usuarioData = req.body;
   try {
+    const { id } = req.params;
+    const usuarioData = req.body;
     const usuario = await UsuarioModel.getById(id);
     if (!usuario) {
       return res.status(404).json({
@@ -80,8 +61,8 @@ export const updateUsuario = async (req, res, next) => {
 }
 
 export const deleteUsuario = async (req, res, next) => {
-  const { id } = req.params;
   try {
+    const { id } = req.params;
     const usuario = await UsuarioModel.getById(id);
     if (!usuario) {
       return res.status(404).json({

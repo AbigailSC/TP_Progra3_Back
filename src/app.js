@@ -1,10 +1,15 @@
 import express from 'express';
+import cors from 'cors';
+import morgan from 'morgan';
 
 import tipoRoutes from './routes/tipoRoutes.js';
 import usuarioRoutes from './routes/usuarioRouter.js';
+import authRoutes from './routes/authRoutes.js';
 
 const app = express();
 
+app.use(cors());
+app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -14,5 +19,6 @@ app.get('/health', (req, res) => {
 
 app.use('/api/tipos', tipoRoutes);
 app.use('/api/usuarios', usuarioRoutes);
+app.use('/api/auth', authRoutes);
 
 export default app;

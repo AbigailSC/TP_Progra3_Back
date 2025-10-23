@@ -21,8 +21,8 @@ export const getAllTipos = async (req, res) => {
 };
 
 export const getTipoById = async (req, res, next) => {
-  const { id } = req.params;
   try {
+    const { id } = req.params;
     const tipoById = await TipoModel.getById(id);
 
     if (!tipoById) {
