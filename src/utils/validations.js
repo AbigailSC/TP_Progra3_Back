@@ -101,3 +101,40 @@ export const validateCreateProducto = ({ titulo, precio, stock, sku, cliente_nom
 
   return errors;
 }
+
+export const validateLogin = ({ email, password }) => {
+  const errors = [];
+  if (!Validator.notEmpty(email)) {
+    errors.push('El correo electrónico es obligatorio');
+  } else if (!Validator.email(email)) {
+    errors.push('El correo electrónico no es válido');
+  }
+  if (!Validator.notEmpty(password)) {
+    errors.push('La contraseña es obligatoria');
+  } else if (!Validator.strongPassword(password)) {
+    errors.push('La contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, una minúscula, un número y un carácter especial');
+  }
+  return errors;
+}
+
+export const validateRegister = ({ nombre, email, password }) => {
+  const errors = [];
+  if (!Validator.notEmpty(nombre)) {
+    errors.push('El nombre es obligatorio');
+  } else if (!Validator.isString(nombre)) {
+    errors.push('El nombre debe ser un texto');
+  } else if (!Validator.length(3, 64)(nombre)) {
+    errors.push('El nombre debe tener entre 3 y 64 caracteres');
+  }
+  if (!Validator.notEmpty(email)) {
+    errors.push('El correo electrónico es obligatorio');
+  } else if (!Validator.email(email)) {
+    errors.push('El correo electrónico no es válido');
+  }
+  if (!Validator.notEmpty(password)) {
+    errors.push('La contraseña es obligatoria');
+  } else if (!Validator.strongPassword(password)) {
+    errors.push('La contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, una minúscula, un número y un carácter especial');
+  }
+  return errors;
+}

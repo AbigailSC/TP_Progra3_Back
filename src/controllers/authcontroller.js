@@ -1,17 +1,26 @@
 import UsuarioModel from '../models/Usuarios.js';
 import { comparePassword, hashPassword } from '../utils/passwordUtils.js';
 import { generateToken } from '../utils/jwtUtils.js';
+import { validateLogin, validateRegister } from '../utils/validations.js';
 
 export const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const loginData = req.body;
+    const validationErrors = validateLogin(loginData);
 
-    const usuario = await UsuarioModel.getByEmail(email);
+    if (validationErrors.length > 0) {
+      return res.status(400).json({
+        status: 400,
+        errors: validationErrors
+      });
+    }
+
+    const usuario = await UsuarioModel.getByEmail(loginData.email);
     if (!usuario) {
       return res.status(401).json({ status: 401, message: 'Credenciales inválidas' });
     }
 
-    const isValidPassword = await comparePassword(password, usuario.password);
+    const isValidPassword = await comparePassword(loginData.password, usuario.password);
     if (!isValidPassword) {
       return res.status(401).json({ status: 401, message: 'Credenciales inválidas' });
     }
