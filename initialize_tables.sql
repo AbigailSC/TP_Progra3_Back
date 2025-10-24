@@ -10,6 +10,8 @@ CREATE TABLE tipos(
     sku VARCHAR(32) NOT NULL,
     url_image VARCHAR(64) NOT NULL,
     id_tipo INT NOT NULL,
+    cliente_nombre VARCHAR(64),
+    activo BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(id_tipo) REFERENCES tipos(id)
