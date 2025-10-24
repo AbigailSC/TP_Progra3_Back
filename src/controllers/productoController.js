@@ -21,3 +21,18 @@ export const createProducto = async (req, res, next) => {
     next(error);
   }
 }
+
+export const uploadProductoImage = async (req, res, next) => {
+  try {
+    const { url_image } = req.body;
+    const id = req.params;
+
+    const updatedProducto = await ProductoModel.updateImage(id, url_image);
+    res.json({
+      status: 200,
+      data: updatedProducto
+    });
+  } catch (error) {
+    next(error);
+  }
+}

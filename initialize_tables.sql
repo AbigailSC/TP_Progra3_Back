@@ -8,7 +8,7 @@ CREATE TABLE tipos(
     stock INT NOT NULL,
     descripcion VARCHAR(100),
     sku VARCHAR(32) NOT NULL,
-    url_image VARCHAR(64) NOT NULL,
+    url_image VARCHAR(64),
     id_tipo INT NOT NULL,
     cliente_nombre VARCHAR(64),
     activo BOOLEAN DEFAULT TRUE,

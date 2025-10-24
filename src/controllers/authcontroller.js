@@ -49,6 +49,14 @@ export const getProfile = async (req, res, next) => {
 export const register = async (req, res, next) => {
   try {
     const usuarioData = req.body;
+    const validationErrors = validateRegister(usuarioData);
+
+    if (validationErrors.length > 0) {
+      return res.status(400).json({
+        status: 400,
+        errors: validationErrors
+      });
+    }
     const userExists = await UsuarioModel.getByEmail(usuarioData.email);
     if (userExists) {
       return res.status(400).json({
