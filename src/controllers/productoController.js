@@ -22,6 +22,26 @@ export const createProducto = async (req, res, next) => {
   }
 }
 
+export const updateProducto = async (req, res, next) => {
+  try {
+    const id = req.params;
+    const productoData = req.body;
+    const updatedProducto = await ProductoModel.update(id, productoData);
+    if (!updatedProducto) {
+      return res.status(404).json({
+        status: 404,
+        message: 'Producto no encontrado'
+      });
+    }
+    res.json({
+      status: 200,
+      data: updatedProducto
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export const uploadProductoImage = async (req, res, next) => {
   try {
     const { url_image } = req.body;

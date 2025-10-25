@@ -10,7 +10,6 @@ CREATE TABLE tipos(
     sku VARCHAR(32) NOT NULL,
     url_image VARCHAR(64),
     id_tipo INT NOT NULL,
-    cliente_nombre VARCHAR(64),
     activo BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -35,6 +34,7 @@ CREATE TABLE tipos(
 ); CREATE TABLE ventas(
     id INT PRIMARY KEY AUTO_INCREMENT,
     id_carrito INT NOT NULL,
+    cliente_nombre VARCHAR(64),
     estado VARCHAR(32) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

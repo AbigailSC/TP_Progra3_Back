@@ -48,6 +48,18 @@ const Validator = {
       return false;
     }
   },
+  range: (minValue, maxValue) => {
+    return (value) => {
+      if (typeof value !== 'number' || Number.isNaN(value)) return false;
+      return value >= minValue && value <= maxValue;
+    }
+  },
+  optional: (value, validatorFunction) => {
+    if (value === null || value === undefined || value === '') {
+      return true;
+    }
+    return validatorFunction(value);
+  },
   isBoolean: (value) => {
     return typeof value === 'boolean';
   },
@@ -56,7 +68,7 @@ const Validator = {
   }
 }
 
-export const validateCreateProducto = ({ titulo, precio, stock, sku, cliente_nombre }) => {
+export const validateCreateProducto = ({ titulo, precio, stock, sku }) => {
   const errors = [];
 
   if (!Validator.notEmpty(titulo)) {
@@ -136,5 +148,42 @@ export const validateRegister = ({ nombre, email, password }) => {
   } else if (!Validator.strongPassword(password)) {
     errors.push('La contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, una minúscula, un número y un carácter especial');
   }
+  return errors;
+}
+
+export const validateUpdateProducto = ({ titulo, precio, stock, sku, descripcion, id_tipo }) => {
+  const errors = [];
+  if (!Validator.optional(titulo, Validator.isString)) {
+    errors.push('El titulo debe ser un texto');
+  } else if (!Validator.optional(titulo, Validator.length(3, 100))) {
+    errors.push('El titulo debe tener entre 3 y 100 caracteres');
+  }
+
+  if (!Validator.optional(precio, Validator.isFloat)) {
+    errors.push('El precio debe ser un número');
+  } else if (!Validator.optional(precio, Validator.isPositive)) {
+    errors.push('El precio debe ser mayor a 0');
+  }
+
+  if (!Validator.optional(stock, Validator.isInt)) {
+    errors.push('El stock debe ser un número entero');
+  } else if (!Validator.optional(stock, Validator.isPositive)) {
+    errors.push('El stock no puede ser negativo');
+  }
+
+  if (!Validator.optional(sku, Validator.isString)) {
+    errors.push('El SKU debe ser un texto');
+  } else if (!Validator.optional(sku, Validator.length(3, 32))) {
+    errors.push('El SKU debe tener entre 3 y 32 caracteres');
+  }
+
+  if (!Validator.optional(descripcion, Validator.isString)) {
+    errors.push('La descripción debe ser un texto');
+  }
+
+  if (!Validator.optional(id_tipo, Validator.isInt)) {
+    errors.push('El id_tipo debe ser un número entero');
+  }
+
   return errors;
 }
