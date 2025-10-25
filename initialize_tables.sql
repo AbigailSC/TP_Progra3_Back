@@ -7,17 +7,18 @@ CREATE TABLE tipos(
     precio FLOAT NOT NULL,
     stock INT NOT NULL,
     descripcion VARCHAR(100),
-    sku VARCHAR(32) NOT NULL,
+    sku VARCHAR(32) UNIQUE NOT NULL,
     url_image VARCHAR(64),
     id_tipo INT NOT NULL,
     activo BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY(id_tipo) REFERENCES tipos(id)
+    FOREIGN KEY(id_tipo) REFERENCES tipos(id),
+    INDEX idx_titulo (titulo)
 ); CREATE TABLE usuarios(
     id INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(64) NOT NULL,
-    email VARCHAR(64) NOT NULL UNIQUE,
+    email VARCHAR(64) UNIQUE NOT NULL,
     admin BOOLEAN DEFAULT FALSE,
     password VARCHAR(64) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

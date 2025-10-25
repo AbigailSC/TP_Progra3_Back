@@ -2,10 +2,10 @@ import pool from '../config/database.js';
 
 const ProductoModel = {
   create: async (producto) => {
-    const { titulo, precio, stock, descripcion, sku, id_tipo, cliente_nombre } = producto;
+    const { titulo, precio, stock, descripcion, sku, id_tipo } = producto;
     const [result] = await pool.query(
-      'INSERT INTO productos (titulo, precio, stock, descripcion, sku, id_tipo, cliente_nombre) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [titulo, precio, stock, descripcion, sku, id_tipo, cliente_nombre]
+      'INSERT INTO productos (titulo, precio, stock, descripcion, sku, id_tipo, url_image) VALUES (?, ?, ?, ?, ?, ?, NULL)',
+      [titulo, precio, stock, descripcion, sku, id_tipo]
     );
     return { id: result.insertId, ...producto };
   },
@@ -29,7 +29,7 @@ const ProductoModel = {
     const query = `UPDATE productos SET ${campos.join(', ')} WHERE id = ?`;
 
     const [result] = await pool.query(query, valores);
-    return result.affectedRows > 0 ? { id, ...producto } : null;
+    return result.affectedRows > 0 ? producto : null;
   }
 };
 

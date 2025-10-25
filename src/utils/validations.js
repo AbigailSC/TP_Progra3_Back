@@ -68,7 +68,7 @@ const Validator = {
   }
 }
 
-export const validateCreateProducto = ({ titulo, precio, stock, sku }) => {
+export const validateCreateProducto = ({ titulo, precio, stock, id_tipo }) => {
   const errors = [];
 
   if (!Validator.notEmpty(titulo)) {
@@ -95,20 +95,10 @@ export const validateCreateProducto = ({ titulo, precio, stock, sku }) => {
     errors.push('El stock no puede ser negativo');
   }
 
-  if (!Validator.notEmpty(sku)) {
-    errors.push('El SKU es obligatorio');
-  } else if (!Validator.isString(sku)) {
-    errors.push('El SKU debe ser un texto');
-  } else if (!Validator.length(3, 32)(sku)) {
-    errors.push('El SKU debe tener entre 3 y 32 caracteres');
-  }
-
-  if (cliente_nombre !== undefined) {
-    if (!Validator.isString(cliente_nombre)) {
-      errors.push('El nombre del cliente debe ser un texto');
-    } else if (!Validator.length(3, 64)(cliente_nombre)) {
-      errors.push('El nombre del cliente debe tener entre 3 y 64 caracteres');
-    }
+  if (!Validator.notEmpty(id_tipo)) {
+    errors.push('El id_tipo es obligatorio');
+  } else if (!Validator.isInt(id_tipo)) {
+    errors.push('El id_tipo debe ser un número entero');
   }
 
   return errors;
@@ -129,7 +119,7 @@ export const validateLogin = ({ email, password }) => {
   return errors;
 }
 
-export const validateRegister = ({ nombre, email, password }) => {
+export const validateRegister = ({ nombre, email, password, admin }) => {
   const errors = [];
   if (!Validator.notEmpty(nombre)) {
     errors.push('El nombre es obligatorio');
@@ -148,10 +138,13 @@ export const validateRegister = ({ nombre, email, password }) => {
   } else if (!Validator.strongPassword(password)) {
     errors.push('La contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, una minúscula, un número y un carácter especial');
   }
+  if (!Validator.optional(admin, Validator.isBoolean)) {
+    errors.push('El campo admin debe ser un valor booleano');
+  }
   return errors;
 }
 
-export const validateUpdateProducto = ({ titulo, precio, stock, sku, descripcion, id_tipo }) => {
+export const validateUpdateProducto = ({ titulo, precio, stock, descripcion, id_tipo }) => {
   const errors = [];
   if (!Validator.optional(titulo, Validator.isString)) {
     errors.push('El titulo debe ser un texto');
@@ -169,12 +162,6 @@ export const validateUpdateProducto = ({ titulo, precio, stock, sku, descripcion
     errors.push('El stock debe ser un número entero');
   } else if (!Validator.optional(stock, Validator.isPositive)) {
     errors.push('El stock no puede ser negativo');
-  }
-
-  if (!Validator.optional(sku, Validator.isString)) {
-    errors.push('El SKU debe ser un texto');
-  } else if (!Validator.optional(sku, Validator.length(3, 32))) {
-    errors.push('El SKU debe tener entre 3 y 32 caracteres');
   }
 
   if (!Validator.optional(descripcion, Validator.isString)) {

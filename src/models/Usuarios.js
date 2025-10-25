@@ -14,20 +14,21 @@ const UsuarioModel = {
     return results[0];
   },
   create: async (usuario) => {
-    const { nombre, email, password } = usuario;
+    const { nombre, email, password, admin = false } = usuario;
+
     const [result] = await pool.query(
-      'INSERT INTO usuarios (nombre, email, password) VALUES (?, ?, ?)',
-      [nombre, email, password]
+      'INSERT INTO usuarios (nombre, email, password, admin) VALUES (?, ?, ?, ?)',
+      [nombre, email, password, admin]
     );
     return { id: result.insertId, ...usuario };
   },
   update: async (id, usuario) => {
     const { nombre, password } = usuario;
-    await pool.query(
+    const [result] = await pool.query(
       'UPDATE usuarios SET nombre = ?, password = ? WHERE id = ?',
       [nombre, password, id]
     );
-    return { id, ...usuario };
+    return result;
   },
   delete: async (id) => {
     const result = await pool.query('DELETE FROM usuarios WHERE id = ?', [id]);
