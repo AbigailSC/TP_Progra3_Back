@@ -43,7 +43,7 @@ const ProductoModel = {
     return result.affectedRows > 0 ? { id, url_image } : null;
   },
   delete: async (id) => {
-    const [result] = await pool.query('DELETE FROM productos WHERE id = ?', [id]);
+    const [result] = await pool.query('UPDATE productos SET estado = FALSE WHERE id = ?', [id]);
     return result.affectedRows > 0;
   },
   getProductosPaginated: async (page = 1, limit = 10, filters = {}) => {
@@ -53,6 +53,9 @@ const ProductoModel = {
     let countQuery = 'SELECT COUNT(*) as total FROM productos';
     const params = [];
     const whereClauses = [];
+
+    whereClauses.push('activo = ?');
+    params.push(true);
 
     if (filters.id_tipo) {
       whereClauses.push('id_tipo = ?');

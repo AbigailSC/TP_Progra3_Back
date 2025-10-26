@@ -54,6 +54,40 @@ export const updateProducto = async (req, res, next) => {
   }
 }
 
+export const deleteProducto = async (req, res, next) => {
+  try {
+    const id = req.params;
+    const deleted = await ProductoModel.delete(id);
+    if (!deleted) {
+      return res.status(404).json({
+        status: 404,
+        message: 'Producto no encontrado'
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+}
+
+export const getProductoById = async (req, res, next) => {
+  try {
+    const id = req.params;
+    const producto = await ProductoModel.getById(id);
+    if (!producto) {
+      return res.status(404).json({
+        status: 404,
+        message: 'Producto no encontrado'
+      });
+    }
+    res.json({
+      status: 200,
+      data: producto
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export const uploadProductoImage = async (req, res, next) => {
   try {
     const { url_image } = req.body;
