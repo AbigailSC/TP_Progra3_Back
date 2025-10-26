@@ -1,6 +1,7 @@
 import ProductoModel from '../models/Producto.js';
 import { validateCreateProducto, validateUpdateProducto } from '../utils/validations.js';
 import { generateSKU } from '../utils/generateSKU.js';
+import { validatePaginationParams, validateOrderBy, validateOrder, PRODUCTO_ORDER_FIELDS } from '../utils/pagination.js';
 
 export const createProducto = async (req, res, next) => {
   try {
@@ -63,6 +64,56 @@ export const uploadProductoImage = async (req, res, next) => {
       status: 200,
       data: updatedProducto
     });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export const getAllProductos = async (req, res, next) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    const validation = validatePaginationParams(page, limit);
+
+    if (!validation.isValid) {
+      return res.status(400).json({
+        status: 400,
+        message: 'Parámetros de paginación inválidos',
+        errors: validation.errors
+      });
+    }
+
+    const orderBy = validateOrderBy(req.query.order_by, PRODUCTO_ORDER_FIELDS);
+    const order = validateOrder(req.query.order);
+
+    const filters = {
+      id_tipo: req.query.tipo ? parseInt(req.query.tipo) : null,
+      search: req.query.buscar || null,
+      precio_min: req.query.precio_min ? parseFloat(req.query.precio_min) : null,
+      precio_max: req.query.precio_max ? parseFloat(req.query.precio_max) : null,
+      orderBy: orderBy,
+      order: order
+    };
+
+    const { productos, total } = await ProductoModel.getProductosPaginated(page, limit, filters);
+
+    const totalPages = Math.ceil(total / limit);
+    const hasNextPage = page < totalPages;
+    const hasPrevPage = page > 1;
+
+    res.json({
+      status: 200,
+      data: productos,
+      pagination: {
+        currentPage: page,
+        pageSize: limit,
+        totalItems: total,
+        totalPages: totalPages,
+        hasNextPage: hasNextPage,
+        hasPrevPage: hasPrevPage
+      }
+    })
   } catch (error) {
     next(error);
   }
