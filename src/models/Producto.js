@@ -2,10 +2,10 @@ import pool from '../config/database.js';
 
 const ProductoModel = {
   create: async (producto) => {
-    const { titulo, precio, stock, descripcion, sku, id_tipo } = producto;
+    const { titulo, precio, stock, descripcion, sku, id_usuario, id_tipo } = producto;
     const [result] = await pool.query(
-      'INSERT INTO productos (titulo, precio, stock, descripcion, sku, id_tipo, url_image) VALUES (?, ?, ?, ?, ?, ?, NULL)',
-      [titulo, precio, stock, descripcion, sku, id_tipo]
+      'INSERT INTO productos (titulo, precio, stock, descripcion, sku, id_usuario, id_tipo, url_image) VALUES (?, ?, ?, ?, ?, ?, ?, NULL)',
+      [titulo, precio, stock, descripcion, sku, id_usuario, id_tipo]
     );
     return { id: result.insertId, ...producto };
   },

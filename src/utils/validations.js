@@ -68,7 +68,7 @@ const Validator = {
   }
 }
 
-export const validateCreateProducto = ({ titulo, precio, stock, id_tipo }) => {
+export const validateCreateProducto = ({ titulo, precio, stock, id_usuario, id_tipo }) => {
   const errors = [];
 
   if (!Validator.notEmpty(titulo)) {
@@ -93,6 +93,10 @@ export const validateCreateProducto = ({ titulo, precio, stock, id_tipo }) => {
     errors.push('El stock debe ser un número entero');
   } else if (!Validator.isPositive(stock)) {
     errors.push('El stock no puede ser negativo');
+  }
+
+  if (!Validator.optional(id_usuario, Validator.isInt)) {
+    errors.push('El id_usuario debe ser un número entero');
   }
 
   if (!Validator.notEmpty(id_tipo)) {
