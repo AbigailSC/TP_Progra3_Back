@@ -2,6 +2,8 @@ import ProductoModel from '../models/Producto.js';
 import { validateCreateProducto, validateUpdateProducto } from '../utils/validations.js';
 import { generateSKU } from '../utils/generateSKU.js';
 import { validatePaginationParams, validateOrderBy, validateOrder, PRODUCTO_ORDER_FIELDS } from '../utils/pagination.js';
+import { uploadImage } from '../config/cloudinary.js';
+import { link } from 'fs';
 
 export const createProducto = async (req, res, next) => {
   try {
@@ -90,16 +92,29 @@ export const getProductoById = async (req, res, next) => {
 
 export const uploadProductoImage = async (req, res, next) => {
   try {
-    const { url_image } = req.body;
-    const id = req.params;
+    const { id } = req.params;
 
-    const updatedProducto = await ProductoModel.updateImage(id, url_image);
+    if (!req.file) {
+      return res.status(400).json({
+        status: 400,
+        message: 'No se ha seleccionado ninguna imagen'
+      });
+    }
+
+    const imageUrl = await uploadImage(req.file.buffer);
+
+    await ProductoModel.updateImage(id, imageUrl);
     res.json({
       status: 200,
-      data: updatedProducto
+      message: 'Imagen subida exitosamente',
+      link: imageUrl
     });
   } catch (error) {
-    next(error);
+    res.json({
+      status: 500,
+      message: 'Error al subir la imagen',
+      error: error.message
+    });
   }
 }
 

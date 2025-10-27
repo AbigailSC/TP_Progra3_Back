@@ -40,6 +40,7 @@ const ProductoModel = {
       'UPDATE productos SET url_image = ? WHERE id = ?',
       [url_image, id]
     );
+
     return result.affectedRows > 0 ? { id, url_image } : null;
   },
   delete: async (id) => {
