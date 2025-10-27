@@ -18,7 +18,6 @@ export const authenticate = async (req, res, next) => {
 
     const decoded = verifyToken(token);
     const usuario = await UsuarioModel.getById(decoded.id);
-    console.log("🚀 ~ authenticate ~ usuario:", usuario)
 
     if (!usuario) {
       return res.status(401).json({ status: 401, message: 'Usuario no encontrado' });

@@ -9,6 +9,7 @@ services:
       - '3307:3306'
     volumes:
       - mysql-data:/var/lib/mysql
+      - ./init-db:/docker-entrypoint-initdb.d
     networks:
       - app-network
   app:
