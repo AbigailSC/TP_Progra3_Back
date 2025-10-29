@@ -3,6 +3,7 @@ import { validateCreateProducto, validateUpdateProducto } from '../utils/validat
 import { generateSKU } from '../utils/generateSKU.js';
 import { validatePaginationParams, validateOrderBy, validateOrder, PRODUCTO_ORDER_FIELDS } from '../utils/pagination.js';
 import { uploadImage } from '../config/cloudinary.js';
+import { sendResponse } from '../utils/customResponse.js';
 
 export const createProducto = async (req, res, next) => {
   try {
@@ -11,17 +12,11 @@ export const createProducto = async (req, res, next) => {
     productoData.sku = generateSKU(productoData.titulo, productoData.id_tipo);
 
     if (validationErrors.length > 0) {
-      return res.status(400).json({
-        status: 400,
-        errors: validationErrors
-      });
+      return sendResponse(res, 400, 'Errores de validación', validationErrors);
     }
 
     const newProducto = await ProductoModel.create(productoData);
-    res.status(201).json({
-      status: 201,
-      data: newProducto
-    });
+    return sendResponse(res, 201, 'Producto creado exitosamente', newProducto);
   } catch (error) {
     next(error);
   }
@@ -33,23 +28,14 @@ export const updateProducto = async (req, res, next) => {
     const productoData = req.body;
     const validationErrors = validateUpdateProducto(productoData);
     if (validationErrors.length > 0) {
-      return res.status(400).json({
-        status: 400,
-        errors: validationErrors
-      });
+      return sendResponse(res, 400, 'Errores de validación', validationErrors);
     }
 
     const updatedProducto = await ProductoModel.update(id, productoData);
     if (!updatedProducto) {
-      return res.status(404).json({
-        status: 404,
-        message: 'Producto no encontrado'
-      });
+      return sendResponse(res, 404, 'Producto no encontrado');
     }
-    res.json({
-      status: 200,
-      data: updatedProducto
-    });
+    return sendResponse(res, 200, 'Producto actualizado exitosamente', updatedProducto);
   } catch (error) {
     next(error);
   }
@@ -60,11 +46,9 @@ export const deleteProducto = async (req, res, next) => {
     const id = req.params;
     const deleted = await ProductoModel.delete(id);
     if (!deleted) {
-      return res.status(404).json({
-        status: 404,
-        message: 'Producto no encontrado'
-      });
+      return sendResponse(res, 404, 'Producto no encontrado');
     }
+    return sendResponse(res, 200, 'Producto eliminado exitosamente');
   } catch (error) {
     next(error);
   }
@@ -75,15 +59,9 @@ export const getProductoById = async (req, res, next) => {
     const id = req.params;
     const producto = await ProductoModel.getById(id);
     if (!producto) {
-      return res.status(404).json({
-        status: 404,
-        message: 'Producto no encontrado'
-      });
+      return sendResponse(res, 404, 'Producto no encontrado');
     }
-    res.json({
-      status: 200,
-      data: producto
-    });
+    return sendResponse(res, 200, 'Producto obtenido exitosamente', producto);
   } catch (error) {
     next(error);
   }
@@ -94,20 +72,13 @@ export const uploadProductoImage = async (req, res, next) => {
     const { id } = req.params;
 
     if (!req.file) {
-      return res.status(400).json({
-        status: 400,
-        message: 'No se ha seleccionado ninguna imagen'
-      });
+      return sendResponse(res, 400, 'No se ha proporcionado ninguna imagen');
     }
 
     const imageUrl = await uploadImage(req.file.buffer);
 
     await ProductoModel.updateImage(id, imageUrl);
-    res.json({
-      status: 200,
-      message: 'Imagen subida exitosamente',
-      link: imageUrl
-    });
+    return sendResponse(res, 200, 'Imagen subida exitosamente', imageUrl);
   } catch (error) {
     res.json({
       status: 500,
@@ -125,11 +96,7 @@ export const getAllProductos = async (req, res, next) => {
     const validation = validatePaginationParams(page, limit);
 
     if (!validation.isValid) {
-      return res.status(400).json({
-        status: 400,
-        message: 'Parámetros de paginación inválidos',
-        errors: validation.errors
-      });
+      return sendResponse(res, 400, 'Parámetros de paginación inválidos', validation.errors);
     }
 
     const orderBy = validateOrderBy(req.query.order_by, PRODUCTO_ORDER_FIELDS);
@@ -150,9 +117,8 @@ export const getAllProductos = async (req, res, next) => {
     const hasNextPage = page < totalPages;
     const hasPrevPage = page > 1;
 
-    res.json({
-      status: 200,
-      data: productos,
+    return sendResponse(res, 200, 'Productos obtenidos exitosamente', {
+      productos,
       pagination: {
         currentPage: page,
         pageSize: limit,
@@ -161,7 +127,7 @@ export const getAllProductos = async (req, res, next) => {
         hasNextPage: hasNextPage,
         hasPrevPage: hasPrevPage
       }
-    })
+    });
   } catch (error) {
     next(error);
   }

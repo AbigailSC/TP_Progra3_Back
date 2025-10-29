@@ -1,20 +1,14 @@
 import UsuarioModel from "../models/Usuarios.js";
-import { hashPassword } from "../utils/passwordUtils.js";
+import { sendResponse } from '../utils/customResponse.js';
 
 export const getAllUsuarios = async (req, res, next) => {
   try {
     const usuarios = await UsuarioModel.getAll();
     if (usuarios.length === 0) {
-      return res.status(404).json({
-        status: 404,
-        message: 'No se encontraron usuarios'
-      });
+      return sendResponse(res, 404, 'No se encontraron usuarios');
     }
 
-    res.status(200).json({
-      status: 200,
-      data: usuarios
-    });
+    return sendResponse(res, 200, 'Usuarios obtenidos exitosamente', usuarios);
   } catch (error) {
     next(error);
   }
@@ -25,15 +19,9 @@ export const getUsuarioById = async (req, res, next) => {
     const { id } = req.params;
     const usuario = await UsuarioModel.getById(id);
     if (!usuario) {
-      return res.status(404).json({
-        status: 404,
-        message: 'Usuario no encontrado'
-      });
+      return sendResponse(res, 404, 'Usuario no encontrado');
     }
-    res.status(200).json({
-      status: 200,
-      data: usuario
-    });
+    return sendResponse(res, 200, 'Usuario obtenido exitosamente', usuario);
   } catch (error) {
     next(error);
   }
@@ -45,16 +33,10 @@ export const updateUsuario = async (req, res, next) => {
     const usuarioData = req.body;
     const usuario = await UsuarioModel.getById(id);
     if (!usuario) {
-      return res.status(404).json({
-        status: 404,
-        message: 'Usuario no encontrado'
-      });
+      return sendResponse(res, 404, 'Usuario no encontrado');
     }
     const updatedUsuario = await UsuarioModel.update(id, usuarioData);
-    res.status(200).json({
-      status: 200,
-      data: updatedUsuario
-    });
+    return sendResponse(res, 200, 'Usuario actualizado correctamente', updatedUsuario);
   } catch (error) {
     next(error);
   }
@@ -65,16 +47,10 @@ export const deleteUsuario = async (req, res, next) => {
     const { id } = req.params;
     const usuario = await UsuarioModel.getById(id);
     if (!usuario) {
-      return res.status(404).json({
-        status: 404,
-        message: 'Usuario no encontrado'
-      });
+      return sendResponse(res, 404, 'Usuario no encontrado');
     }
     await UsuarioModel.delete(id);
-    res.status(200).json({
-      status: 200,
-      message: 'Usuario eliminado correctamente'
-    });
+    return sendResponse(res, 200, 'Usuario eliminado correctamente');
   } catch (error) {
     next(error);
   }

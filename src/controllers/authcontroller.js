@@ -2,6 +2,7 @@ import UsuarioModel from '../models/Usuarios.js';
 import { comparePassword, hashPassword } from '../utils/passwordUtils.js';
 import { generateToken } from '../utils/jwtUtils.js';
 import { validateLogin, validateRegister } from '../utils/validations.js';
+import { sendResponse } from '../utils/customResponse.js';
 
 export const login = async (req, res, next) => {
   try {
@@ -9,25 +10,22 @@ export const login = async (req, res, next) => {
     const validationErrors = validateLogin(loginData);
 
     if (validationErrors.length > 0) {
-      return res.status(400).json({
-        status: 400,
-        errors: validationErrors
-      });
+      return sendResponse(res, 400, 'Errores de validación', validationErrors);
     }
 
     const usuario = await UsuarioModel.getByEmail(loginData.email);
     if (!usuario) {
-      return res.status(401).json({ status: 401, message: 'Credenciales inválidas' });
+      return sendResponse(res, 401, 'Credenciales inválidas');
     }
 
     const isValidPassword = await comparePassword(loginData.password, usuario.password);
     if (!isValidPassword) {
-      return res.status(401).json({ status: 401, message: 'Credenciales inválidas' });
+      return sendResponse(res, 401, 'Credenciales inválidas');
     }
 
     const token = generateToken({ id: usuario.id })
 
-    res.json({ status: 200, message: 'Login exitoso', token });
+    return sendResponse(res, 200, 'Login exitoso', token);
   } catch (error) {
     next(error);
   }
@@ -35,12 +33,12 @@ export const login = async (req, res, next) => {
 
 export const getProfile = async (req, res, next) => {
   try {
-    const usuarioId = req.usuario.id;
-    const usuario = await UsuarioModel.getById(usuarioId);
+    const { id } = req.params;
+    const usuario = await UsuarioModel.getById(id);
     if (!usuario) {
-      return res.status(404).json({ status: 404, message: 'Usuario no encontrado' });
+      return sendResponse(res, 404, 'Usuario no encontrado');
     }
-    res.json({ status: 200, data: usuario });
+    return sendResponse(res, 200, 'Perfil obtenido exitosamente', usuario);
   } catch (error) {
     next(error);
   }
@@ -52,27 +50,18 @@ export const register = async (req, res, next) => {
     const validationErrors = validateRegister(usuarioData);
 
     if (validationErrors.length > 0) {
-      return res.status(400).json({
-        status: 400,
-        errors: validationErrors
-      });
+      return sendResponse(res, 400, 'Errores de validación', validationErrors);
     }
     const userExists = await UsuarioModel.getByEmail(usuarioData.email);
     if (userExists) {
-      return res.status(400).json({
-        status: 400,
-        message: 'El correo electrónico ya está en uso'
-      });
+      return sendResponse(res, 400, 'El correo electrónico ya está en uso');
     }
 
     const passwordHashed = await hashPassword(usuarioData.password);
     usuarioData.password = passwordHashed;
 
     const newUsuario = await UsuarioModel.create(usuarioData);
-    res.status(201).json({
-      status: 201,
-      data: newUsuario
-    });
+    return sendResponse(res, 201, 'Usuario registrado exitosamente', newUsuario);
   } catch (error) {
     next(error);
   }
