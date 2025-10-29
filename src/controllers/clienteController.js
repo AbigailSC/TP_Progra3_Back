@@ -1,4 +1,5 @@
 import { validateCliente } from '../utils/validations.js';
+import ClienteModel from '../models/Cliente.js';
 
 export const createCliente = async (req, res, next) => {
   try {

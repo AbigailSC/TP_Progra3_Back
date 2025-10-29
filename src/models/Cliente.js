@@ -5,9 +5,9 @@ const ClienteModel = {
     const campos = [];
     const valores = [];
 
-    for (const [key, value] of Object.entries(producto)) {
+    for (const [key, value] of Object.entries(cliente)) {
       if (value !== undefined) {
-        campos.push(`${key} = ?`);
+        campos.push(key);
         valores.push(value);
       }
     }
