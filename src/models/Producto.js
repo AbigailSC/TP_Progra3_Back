@@ -20,10 +20,6 @@ const ProductoModel = {
       }
     }
 
-    if (campos.length === 0) {
-      throw new Error('No se proporcionaron campos para actualizar');
-    }
-
     valores.push(id);
 
     const query = `UPDATE productos SET ${campos.join(', ')} WHERE id = ?`;

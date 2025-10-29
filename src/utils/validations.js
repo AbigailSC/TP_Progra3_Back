@@ -182,3 +182,24 @@ export const validateUpdateProducto = ({ titulo, precio, stock, descripcion, id_
 
   return errors;
 }
+
+export const validateCliente = ({ nombre, email, telefono }) => {
+  const errors = [];
+
+  if (!Validator.notEmpty(nombre)) {
+    errors.push('El nombre es obligatorio');
+  } else if (!Validator.isString(nombre)) {
+    errors.push('El nombre debe ser un texto');
+  } else if (!Validator.length(3, 100)(nombre)) {
+    errors.push('El nombre debe tener entre 3 y 100 caracteres');
+  }
+
+  if (!Validator.optional(email, Validator.email)) {
+    errors.push('El correo electrónico no es válido');
+  }
+
+  if (!Validator.optional(telefono, Validator.length(7, 15))) {
+    errors.push('El teléfono debe tener entre 7 y 15 caracteres');
+  }
+  return errors;
+}

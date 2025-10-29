@@ -6,6 +6,7 @@ import tipoRoutes from './routes/tipoRoutes.js';
 import usuarioRoutes from './routes/usuarioRouter.js';
 import authRoutes from './routes/authRoutes.js';
 import productosRoutes from './routes/productoRoutes.js';
+import clienteRoutes from './routes/clienteRouter.js';
 
 const app = express();
 
@@ -22,5 +23,6 @@ app.use('/api/tipos', tipoRoutes);
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/productos', productosRoutes);
+app.use('/api/clientes', clienteRoutes);
 
 export default app;

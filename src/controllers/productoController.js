@@ -3,7 +3,6 @@ import { validateCreateProducto, validateUpdateProducto } from '../utils/validat
 import { generateSKU } from '../utils/generateSKU.js';
 import { validatePaginationParams, validateOrderBy, validateOrder, PRODUCTO_ORDER_FIELDS } from '../utils/pagination.js';
 import { uploadImage } from '../config/cloudinary.js';
-import { link } from 'fs';
 
 export const createProducto = async (req, res, next) => {
   try {
