@@ -3,10 +3,11 @@ import cors from 'cors';
 import morgan from 'morgan';
 
 import tipoRoutes from './routes/tipoRoutes.js';
-import usuarioRoutes from './routes/usuarioRouter.js';
+import usuarioRoutes from './routes/usuarioRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import productosRoutes from './routes/productoRoutes.js';
-import clienteRoutes from './routes/clienteRouter.js';
+import clienteRoutes from './routes/clienteRoutes.js';
+import carritoRoutes from './routes/carritoRoutes.js';
 
 const app = express();
 
@@ -24,5 +25,6 @@ app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/productos', productosRoutes);
 app.use('/api/clientes', clienteRoutes);
+app.use('/api/carritos', carritoRoutes);
 
 export default app;

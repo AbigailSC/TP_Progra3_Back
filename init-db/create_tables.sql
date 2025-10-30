@@ -61,7 +61,6 @@ CREATE TABLE IF NOT EXISTS tipos(
     id INT PRIMARY KEY AUTO_INCREMENT,
     id_carrito INT NOT NULL,
     id_cliente INT,
-    cliente_nombre VARCHAR(100),
     total DECIMAL(10, 2) NOT NULL,
     estado ENUM('pendiente', 'procesando', 'completado', 'cancelado') DEFAULT 'pendiente',
     metodo_pago ENUM('efectivo', 'tarjeta', 'transferencia', 'qr') DEFAULT 'efectivo',

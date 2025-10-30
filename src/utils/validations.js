@@ -203,3 +203,24 @@ export const validateCliente = ({ nombre, email, telefono }) => {
   }
   return errors;
 }
+
+export const validateCarrito = (cliente_id) => {
+  const errors = [];
+
+  if (!Validator.optional(cliente_id, Validator.isInt)) {
+    errors.push('El id del cliente debe ser un número entero');
+  }
+
+  return errors;
+}
+
+export const validateCarritoEstado = (cliente_id, estado) => {
+  const errors = [];
+  if (!Validator.optional(cliente_id, Validator.isInt)) {
+    errors.push('El id del cliente debe ser un número entero');
+  }
+  if (!Validator.notEmpty(estado)) {
+    errors.push('El estado es obligatorio');
+  }
+  return errors;
+}
