@@ -1,43 +1,47 @@
 import pool from '../config/database.js';
 
 const CarritoItemsModel = {
-  create: async (data) => {
-    const { carritoId, productoId, cantidad } = data;
-
-    const [producto] = await pool.query(
-      'SELECT precio FROM productos WHERE id = ?',
-      [productoId]
-    );
-    // !Cambiar validaciones a controller, recibir todo validado
-    if (producto.length === 0) {
-      throw new Error('Producto no encontrado');
-    }
-
-    const precioUnitario = producto[0].precio;
+  create: async (carritoId, productoId, cantidad, precioUnitario) => {
     const subtotal = precioUnitario * cantidad;
 
-    const [existe] = await pool.query(
+    const [result] = await pool.query(
+      'INSERT INTO carrito_items (id_carrito, id_producto, cantidad, precio_unitario, subtotal) VALUES (?, ?, ?, ?, ?)',
+      [carritoId, productoId, cantidad, precioUnitario, subtotal]
+    );
+
+    return {
+      id: result.insertId,
+      id_carrito: carritoId,
+      id_producto: productoId,
+      cantidad,
+      precio_unitario: precioUnitario,
+      subtotal
+    };
+  },
+  updateCantidad: async (id, cantidad, precioUnitario) => {
+    const subtotal = precioUnitario * cantidad;
+
+    const [result] = await pool.query(
+      'UPDATE carrito_items SET cantidad = ?, subtotal = ? WHERE id = ?',
+      [cantidad, subtotal, id]
+    );
+
+    if (result.affectedRows === 0) {
+      return null;
+    }
+
+    return {
+      id,
+      cantidad: cantidad,
+      subtotal: subtotal
+    };
+  },
+  getByCarritoAndProducto: async (carritoId, productoId) => {
+    const [rows] = await pool.query(
       'SELECT * FROM carrito_items WHERE id_carrito = ? AND id_producto = ?',
       [carritoId, productoId]
     );
-
-    if (existe.length > 0) {
-      const nuevaCantidad = existe[0].cantidad + cantidad;
-      const nuevoSubtotal = precioUnitario * nuevaCantidad;
-
-      await pool.query(
-        'UPDATE carrito_items SET cantidad = ?, subtotal = ? WHERE id = ?',
-        [nuevaCantidad, nuevoSubtotal, existe[0].id]
-      );
-      return { ...existe[0], cantidad: nuevaCantidad, subtotal: nuevoSubtotal };
-    }
-    else {
-      const [result] = await pool.query(
-        'INSERT INTO carrito_items (id_carrito, id_producto, cantidad, precio_unitario, subtotal) VALUES (?, ?, ?, ?, ?)',
-        [carritoId, productoId, cantidad, precioUnitario, subtotal]
-      );
-      return { id: result.insertId, carritoId, productoId, cantidad, precioUnitario, subtotal };
-    }
+    return rows[0] || null;
   },
   getById: async (id) => {
     const [rows] = await pool.query(

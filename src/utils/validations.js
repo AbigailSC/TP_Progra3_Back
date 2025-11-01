@@ -224,3 +224,29 @@ export const validateCarritoEstado = (cliente_id, estado) => {
   }
   return errors;
 }
+
+export const validateAddCarritoItems = (carritoId, productoId, cantidad) => {
+  const errors = [];
+
+  if (!Validator.notEmpty(carritoId)) {
+    errors.push('El carritoId es obligatorio');
+  } else if (!Validator.isInt(carritoId)) {
+    errors.push('El carritoId debe ser un numero entero');
+  }
+
+  if (!Validator.notEmpty(productoId)) {
+    errors.push('El productoId es obligatorio');
+  } else if (!Validator.isInt(productoId)) {
+    errors.push('El productoId debe ser un numero entero');
+  }
+
+  if (!Validator.notEmpty(cantidad)) {
+    errors.push('La cantidad es obligatoria');
+  } else if (!Validator.isInt(cantidad)) {
+    errors.push('El campo cantidad debe ser un numero entero');
+  } else if (!Validator.isPositive(cantidad)) {
+    errors.push('La cantidad debe ser un numero positivo')
+  }
+
+  return errors;
+}
