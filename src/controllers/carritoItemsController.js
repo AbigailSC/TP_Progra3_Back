@@ -17,6 +17,10 @@ export const addItemToCart = async (req, res, next) => {
       return sendResponse(req, 404, 'Producto no encontrado')
     }
 
+    if (cantidad > producto.stock) {
+      return sendResponse(res, 400, 'La cantidad no puede ser superior a la cantidad en stock del producto')
+    }
+
     const itemExistente = await CarritoItemsModel.getByCarritoAndProducto(carritoId, productoId);
 
     let item;
