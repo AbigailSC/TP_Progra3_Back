@@ -182,3 +182,71 @@ export const validateUpdateProducto = ({ titulo, precio, stock, descripcion, id_
 
   return errors;
 }
+
+export const validateCliente = ({ nombre, email, telefono }) => {
+  const errors = [];
+
+  if (!Validator.notEmpty(nombre)) {
+    errors.push('El nombre es obligatorio');
+  } else if (!Validator.isString(nombre)) {
+    errors.push('El nombre debe ser un texto');
+  } else if (!Validator.length(3, 100)(nombre)) {
+    errors.push('El nombre debe tener entre 3 y 100 caracteres');
+  }
+
+  if (!Validator.optional(email, Validator.email)) {
+    errors.push('El correo electrónico no es válido');
+  }
+
+  if (!Validator.optional(telefono, Validator.length(7, 15))) {
+    errors.push('El teléfono debe tener entre 7 y 15 caracteres');
+  }
+  return errors;
+}
+
+export const validateCarrito = (cliente_id) => {
+  const errors = [];
+
+  if (!Validator.optional(cliente_id, Validator.isInt)) {
+    errors.push('El id del cliente debe ser un número entero');
+  }
+
+  return errors;
+}
+
+export const validateCarritoEstado = (cliente_id, estado) => {
+  const errors = [];
+  if (!Validator.optional(cliente_id, Validator.isInt)) {
+    errors.push('El id del cliente debe ser un número entero');
+  }
+  if (!Validator.notEmpty(estado)) {
+    errors.push('El estado es obligatorio');
+  }
+  return errors;
+}
+
+export const validateAddCarritoItems = (carritoId, productoId, cantidad) => {
+  const errors = [];
+
+  if (!Validator.notEmpty(carritoId)) {
+    errors.push('El carritoId es obligatorio');
+  } else if (!Validator.isInt(carritoId)) {
+    errors.push('El carritoId debe ser un numero entero');
+  }
+
+  if (!Validator.notEmpty(productoId)) {
+    errors.push('El productoId es obligatorio');
+  } else if (!Validator.isInt(productoId)) {
+    errors.push('El productoId debe ser un numero entero');
+  }
+
+  if (!Validator.notEmpty(cantidad)) {
+    errors.push('La cantidad es obligatoria');
+  } else if (!Validator.isInt(cantidad)) {
+    errors.push('El campo cantidad debe ser un numero entero');
+  } else if (!Validator.isPositive(cantidad)) {
+    errors.push('La cantidad debe ser un numero positivo')
+  }
+
+  return errors;
+}
