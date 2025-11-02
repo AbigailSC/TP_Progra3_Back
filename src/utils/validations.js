@@ -214,13 +214,16 @@ export const validateCarrito = (cliente_id) => {
   return errors;
 }
 
-export const validateCarritoEstado = (cliente_id, estado) => {
+export const validateCarritoEstado = (id, estado) => {
   const errors = [];
-  if (!Validator.optional(cliente_id, Validator.isInt)) {
+  const estados = ['activo', 'abandonado', 'convertido'];
+  if (!Validator.optional(Number(id), Validator.isInt)) {
     errors.push('El id del cliente debe ser un número entero');
   }
   if (!Validator.notEmpty(estado)) {
     errors.push('El estado es obligatorio');
+  } else if (!estados.includes(estado.toLowerCase())) {
+    errors.push('El estado del carrito debe ser ("activo", "abandonado" o "convertido")')
   }
   return errors;
 }

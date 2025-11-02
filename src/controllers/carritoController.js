@@ -33,15 +33,18 @@ export const getActiveCarrito = async (req, res, next) => {
 
 export const updateEstadoCarrito = async (req, res, next) => {
   try {
-    const { carrito_id } = req.params;
-    const { estado } = req.body;
-    const errors = validateCarritoEstado(carrito_id, estado);
+    const { id } = req.params;
+    let { estado } = req.body;
+
+    const errors = validateCarritoEstado(id, estado);
 
     if (errors.length > 0) {
       return sendResponse(res, 400, 'Errores de validación', { errors });
     }
 
-    const actualizado = await CarritoModel.updateEstado(carrito_id, estado);
+    estado = estado.toLowerCase();
+
+    const actualizado = await CarritoModel.updateEstado(id, estado);
     if (!actualizado) {
       return sendResponse(res, 404, 'Carrito no encontrado o estado no modificado');
     }

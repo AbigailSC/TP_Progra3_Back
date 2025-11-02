@@ -28,7 +28,7 @@ const ProductoModel = {
     return result.affectedRows > 0 ? producto : null;
   },
   getById: async (id) => {
-    const [rows] = await pool.query('SELECT * FROM productos WHERE id = ?', [id]);
+    const [rows] = await pool.query('SELECT * FROM productos WHERE id = ? AND activo = TRUE', [id]);
     return rows[0] || null;
   },
   updateImage: async (id, url_image) => {

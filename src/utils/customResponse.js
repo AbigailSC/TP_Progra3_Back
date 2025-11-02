@@ -7,7 +7,7 @@ const HTTPSTATUS = {
   INTERNAL_ERROR: 500
 }
 
-export const sendResponse = (res, statusCode, message, data = null) => {
+export const sendResponse = (res, statusCode, message, data = undefined) => {
   res.status(statusCode).json({
     status: statusCode,
     message,

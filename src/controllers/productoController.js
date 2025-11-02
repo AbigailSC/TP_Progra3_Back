@@ -56,7 +56,8 @@ export const deleteProducto = async (req, res, next) => {
 
 export const getProductoById = async (req, res, next) => {
   try {
-    const id = req.params;
+    const { id } = req.params;
+
     const producto = await ProductoModel.getById(id);
     if (!producto) {
       return sendResponse(res, 404, 'Producto no encontrado');

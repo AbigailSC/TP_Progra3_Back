@@ -5,6 +5,6 @@ const router = express.Router();
 
 router.post('/', createCarrito);
 router.get('/:cliente_id', getActiveCarrito);
-router.put('/:carrito_id', updateEstadoCarrito);
+router.put('/:id', updateEstadoCarrito);
 
 export default router;
