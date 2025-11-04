@@ -13,6 +13,10 @@ const environments = {
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'test',
     api_key: process.env.CLOUDINARY_API_KEY || 'apikey',
     api_secret: process.env.CLOUDINARY_API_SECRET || 'api_secret'
+  },
+  jwt: {
+    secret: process.env.JWT_SECRET || 'coso_123',
+    expires_in: process.env.JWT_EXPIRES_IN || '1d'
   }
 }
 
