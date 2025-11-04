@@ -9,6 +9,7 @@ import productosRoutes from './routes/productoRoutes.js';
 import clienteRoutes from './routes/clienteRoutes.js';
 import carritoRoutes from './routes/carritoRoutes.js';
 import carritoItemsRoutes from './routes/carritoItemsRoutes.js'
+import ventaRoutes from './routes/ventaRoutes.js'
 
 const app = express();
 
@@ -24,5 +25,6 @@ app.use('/api/productos', productosRoutes);
 app.use('/api/clientes', clienteRoutes);
 app.use('/api/carritos', carritoRoutes);
 app.use('/api/carrito-items', carritoItemsRoutes);
+app.use('/api/ventas', ventaRoutes);
 
 export default app;

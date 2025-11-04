@@ -253,3 +253,28 @@ export const validateAddCarritoItems = (carritoId, productoId, cantidad) => {
 
   return errors;
 }
+
+export const validateVentas = (idCarrito, metodoPago, notas) => {
+  const errors = [];
+  const metodos = ['efectivo', 'tarjeta', 'transferencia', 'qr'];
+
+  if (!Validator.notEmpty(idCarrito)) {
+    errors.push('El id del carrito es obligatoria');
+  } else if (!Validator.isInt(idCarrito)) {
+    errors.push('El id del carrito debe ser un numero entero');
+  }
+
+  if (!Validator.notEmpty(metodoPago)) {
+    errors.push('El metodo de pago es obligatorio')
+  } else if (!metodos.includes(metodoPago.toLowerCase())) {
+    errors.push('El metodo de pago no es valido, debe ser "efectivo", "tarjeta", "transferencia" o "qr"')
+  }
+
+  if (!Validator.optional(notas, Validator.isString)) {
+    errors.push('La nota debe ser un texto');
+  } else if (!Validator.optional(notas, Validator.length(3, 100))) {
+    errors.push('La nota debe ser tener una longitud de entre 3 y 100 caracteres');
+  }
+
+  return errors;
+}
