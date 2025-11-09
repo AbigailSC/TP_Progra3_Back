@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Listado de Ventas</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+        color: white;
+      }
+      th {
+        background-color: #4caf50;
+      }
+      tr:nth-child(even) {
+        color: #f2f2f2;
+      }
+      .estado-pendiente {
+        color: orange;
+      }
+      .estado-procesando {
+        color: blue;
+      }
+      .estado-completado {
+        color: green;
+      }
+      .estado-cancelado {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Listado de Ventas</h1>
+
+    <% if (ventas.length === 0) { %>
+    <p>No hay ventas registradas</p>
+    <% } else { %>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Cliente</th>
+          <th>Total</th>
+          <th>Método de Pago</th>
+          <th>Estado</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% ventas.forEach(venta => { %>
+        <tr>
+          <td>#<%= venta.id %></td>
+          <td><%= venta.id_cliente || 'Anonimo' %></td>
+          <td>$ <%= venta.total.toFixed(2) %></td>
+          <td><%= venta.metodo_pago %></td>
+          <td class="span-label estado-<%= venta.estado.toLowerCase() %>"><%= venta.estado %></td>
+          <td><%= new Date(venta.created_at).toLocaleDateString('es-AR') %></td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+
+    <p><strong>Total de ventas:</strong> <%= ventas.length %></p>
+    <% } %>
+  </body>
+</html>
