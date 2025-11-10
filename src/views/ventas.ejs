@@ -5,41 +5,172 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Listado de Ventas</title>
     <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
       body {
         font-family: Arial, sans-serif;
         max-width: 1200px;
         margin: 0 auto;
         padding: 20px;
       }
+      h1 {
+        color: #333;
+        margin-bottom: 30px;
+        font-size: 2rem;
+      }
       table {
         width: 100%;
         border-collapse: collapse;
         margin-top: 20px;
+        background-color: white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
       }
       th,
       td {
-        border: 1px solid #ddd;
         padding: 12px;
         text-align: left;
-        color: white;
+        color: #333;
       }
       th {
         background-color: #4caf50;
+        color: white;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
       }
-      tr:nth-child(even) {
-        color: #f2f2f2;
+      tbody tr {
+        border-bottom: 1px solid #e0e0e0;
+        transition: background-color 0.2s;
       }
+
+      tbody tr:hover {
+        background-color: #f9f9f9;
+      }
+
+      tbody tr:last-child {
+        border-bottom: none;
+      }
+
+      .estado-badge {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+
       .estado-pendiente {
-        color: orange;
+        background-color: #ff9800;
       }
+
       .estado-procesando {
-        color: blue;
+        background-color: #2196f3;
       }
+
       .estado-completado {
-        color: green;
+        background-color: #4caf50;
       }
+
       .estado-cancelado {
-        color: red;
+        background-color: #f44336;
+      }
+      .acciones {
+        display: flex;
+        gap: 8px;
+      }
+
+      .btn {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-block;
+        color: white;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .btn-editar {
+        background-color: #2196f3;
+      }
+
+      .btn-editar:hover {
+        background-color: #1976d2;
+      }
+
+      .btn-eliminar {
+        background-color: #f44336;
+      }
+
+      .btn-eliminar:hover {
+        background-color: #d32f2f;
+      }
+
+      .btn-reestablecer{
+        background-color: #96e072;
+      }
+      .btn-reestablecer:hover {
+        background-color: #7fc25e;
+      }
+
+      .resumen {
+        margin-top: 30px;
+        padding: 20px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .resumen p {
+        font-size: 1.1rem;
+        color: #333;
+        margin-bottom: 10px;
+      }
+
+      .resumen strong {
+        color: #4caf50;
+      }
+
+      .no-ventas {
+        text-align: center;
+        padding: 60px 20px;
+        background-color: white;
+        border-radius: 8px;
+        color: #666;
+        font-size: 1.2rem;
+      }
+      @media (max-width: 768px) {
+        table {
+          font-size: 0.85rem;
+        }
+
+        th,
+        td {
+          padding: 10px;
+        }
+
+        .acciones {
+          flex-direction: column;
+        }
+
+        .btn {
+          width: 100%;
+        }
       }
     </style>
   </head>
@@ -47,7 +178,9 @@
     <h1>Listado de Ventas</h1>
 
     <% if (ventas.length === 0) { %>
-    <p>No hay ventas registradas</p>
+    <div class="no-ventas">
+      <p>No hay ventas registradas</p>
+    </div>
     <% } else { %>
     <table>
       <thead>
@@ -58,23 +191,38 @@
           <th>Método de Pago</th>
           <th>Estado</th>
           <th>Fecha</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
         <% ventas.forEach(venta => { %>
         <tr>
-          <td>#<%= venta.id %></td>
-          <td><%= venta.id_cliente || 'Anonimo' %></td>
+          <td><strong>#<%= venta.id %></strong></td>
+          <td><%= venta.id_cliente || 'Invitado' %></td>
           <td>$ <%= venta.total.toFixed(2) %></td>
           <td><%= venta.metodo_pago %></td>
-          <td class="span-label estado-<%= venta.estado.toLowerCase() %>"><%= venta.estado %></td>
+          <td>
+            <span class="estado-badge estado-<%= venta.estado.toLowerCase() %>">
+              <%= venta.estado %>
+            </span>
+          </td>
           <td><%= new Date(venta.created_at).toLocaleDateString('es-AR') %></td>
+          <td>
+            <div class="acciones">
+              <a href="/ventas/<%= venta.id %>/editar" class="btn btn-editar">Editar</a>
+              <button class="btn btn-eliminar">Desactivar</button>
+              <button class="btn btn-reestablecer">Activar</button>
+            </div>
+          </td>
         </tr>
         <% }); %>
       </tbody>
     </table>
 
-    <p><strong>Total de ventas:</strong> <%= ventas.length %></p>
+    <div class="resumen">
+      <p><strong>Total de ventas:</strong> <%= ventas.length %></p>
+      <p><strong>Monto total:</strong> $<%= ventas.reduce((sum, v) => sum + Number(v.total), 0).toFixed(2) %></p>
+    </div>
     <% } %>
   </body>
 </html>
