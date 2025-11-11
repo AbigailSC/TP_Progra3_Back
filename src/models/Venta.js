@@ -25,8 +25,9 @@ const Venta = {
   },
   getAll: async () => {
     const [rows] = await pool.query(
-      'SELECT * FROM ventas ORDER BY created_at DESC'
+      'SELECT v.*, c.nombre FROM ventas v LEFT JOIN clientes c ON v.id_cliente = c.id ORDER BY v.created_at DESC'
     );
+
     return rows;
   },
   getByCliente: async (idCliente) => {

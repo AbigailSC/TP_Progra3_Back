@@ -52,3 +52,12 @@ export const getVentaById = async (req, res, next) => {
     next(error);
   }
 }
+
+export const getAllVentas = async (req, res, next) => {
+  try {
+    const ventas = await VentaModel.getAll();
+    return sendResponse(res, 200, 'Ventas encontradas con exito', ventas);
+  } catch (error) {
+    next(error);
+  }
+}
