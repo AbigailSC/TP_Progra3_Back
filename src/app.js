@@ -25,6 +25,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/tipos', tipoRoutes);
 app.use('/api/usuarios', usuarioRoutes);
@@ -34,6 +35,7 @@ app.use('/api/clientes', clienteRoutes);
 app.use('/api/carritos', carritoRoutes);
 app.use('/api/carrito-items', carritoItemsRoutes);
 app.use('/api/ventas', ventaRoutes);
+
 app.use('/api/admin', adminRoutes);
 
 export default app;
