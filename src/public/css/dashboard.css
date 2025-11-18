@@ -1,0 +1,27 @@
+/* Estilos específicos para el dashboard */
+
+body {
+    padding: 20px;
+}
+
+.filters {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.filters select {
+    padding: 8px;
+}
+
+.product-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+#tableContainer {
+    overflow-x: auto;
+}
