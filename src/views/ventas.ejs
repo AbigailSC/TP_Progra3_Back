@@ -24,7 +24,6 @@
           <th>Método de Pago</th>
           <th>Estado</th>
           <th>Fecha</th>
-          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -40,13 +39,6 @@
             </span>
           </td>
           <td><%= new Date(venta.created_at).toLocaleDateString('es-AR') %></td>
-          <td>
-            <div class="acciones">
-              <a href="/ventas/<%= venta.id %>/editar" class="btn btn-editar">Editar</a>
-              <button class="btn btn-eliminar">Desactivar</button>
-              <button class="btn btn-reestablecer">Activar</button>
-            </div>
-          </td>
         </tr>
         <% }); %>
       </tbody>
