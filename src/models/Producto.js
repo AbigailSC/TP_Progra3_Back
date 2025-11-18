@@ -40,7 +40,7 @@ const ProductoModel = {
     return result.affectedRows > 0 ? { id, url_image } : null;
   },
   delete: async (id) => {
-    const [result] = await pool.query('UPDATE productos SET estado = FALSE WHERE id = ?', [id]);
+    const [result] = await pool.query('UPDATE productos SET activo = FALSE WHERE id = ?', [id]);
     return result.affectedRows > 0;
   },
   getProductosPaginated: async (page = 1, limit = 10, filters = {}) => {
