@@ -104,6 +104,14 @@ const ProductoModel = {
       productos,
       total
     }
+  },
+  getCountProductos: async () => {
+    const [rows] = await pool.query('SELECT COUNT(*) as total FROM productos WHERE activo = ?', [true]);
+    return rows[0].total;
+  },
+  getCountProductosById: async (id) => {
+    const [rows] = await pool.query('SELECT COUNT(*) as total FROM productos WHERE activo = ? and id_tipo = ?', [true, id]);
+    return rows[0].total;
   }
 };
 

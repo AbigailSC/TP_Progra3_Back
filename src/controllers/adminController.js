@@ -1,10 +1,11 @@
 import * as XLSX from 'xlsx';
 
 import VentaModel from '../models/Venta.js';
-import ProductoModel from '../models/Producto.js'
-import TipoModel from '../models/Tipo.js'
+import ProductoModel from '../models/Producto.js';
+import TipoModel from '../models/Tipo.js';
+import ClienteModel from '../models/Cliente.js';
 
-import { sendResponse } from '../utils/customResponse.js';
+import { getInfoVentasMes } from '../utils/ventasHelper.js';
 
 export const getAllVentas = async (req, res, next) => {
   try {
@@ -114,22 +115,32 @@ export const dashboard = async (req, res, next) => {
     const totalVentasMesActual = await VentaModel.getTotalVentasMesActual();
     const totalVentasMesPasado = await VentaModel.getVentasMesAnterior();
 
-    const diferencia = totalVentasMesActual.total_vendido - totalVentasMesPasado.total_vendido;
-    let porcentaje;
-    if (totalVentasMesPasado.cantidad_ventas == 0) {
-      porcentaje = 100;
-    } else {
-      porcentaje = (diferencia / totalVentasMesPasado.total_vendido) * 100
+    const cantidadRemeras = await ProductoModel.getCountProductosById(1);
+    const cantidadBuzos = await ProductoModel.getCountProductosById(2);
+
+    const cantidadVentasMesActual = await VentaModel.getCantidadVentasMesActual();
+    const cantidadVentasMesPasado = await VentaModel.getCantidadVentasMesAnterior();
+
+    const cantidadClientesNuevos = await ClienteModel.getNewClientsLastWeek();
+    const totalClientes = await ClienteModel.getTotalClients();
+
+    const total_ventas_mes = getInfoVentasMes(totalVentasMesActual.total_vendido, totalVentasMesPasado.total_vendido, totalVentasMesPasado.cantidad_ventas > 0);
+    const cantidad_ventas_mes = getInfoVentasMes(cantidadVentasMesActual, cantidadVentasMesPasado, cantidadVentasMesPasado > 0);
+
+    const productos = {
+      cantidadProductos: cantidadRemeras + cantidadBuzos,
+      cantidadRemeras,
+      cantidadBuzos
     }
 
-    const ventas_mes = {
-      total: totalVentasMesActual.total_vendido,
-      variacion: porcentaje.toFixed(2) + '%',
-      tipo: porcentaje >= 0 ? "aumento" : "descuento",
-      diferencia
+    const clientes = {
+      cant_clientes_nuevos: cantidadClientesNuevos,
+      total: totalClientes
     }
+    console.log("🚀 ~ dashboard ~ clientes:", clientes)
 
-    res.render('dashboard', { ventas_mes });
+
+    res.render('dashboard', { total_ventas_mes, productos, cantidad_ventas_mes, clientes });
   } catch (error) {
     next();
   }

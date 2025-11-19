@@ -6,10 +6,9 @@ const router = express.Router();
 
 router.get('/login-view', login);
 router.get('/dashboard-view', dashboard);
+router.get('/ventas-view', getAllVentas);
+router.get('/productos-view', getAllProductos);
 
-router.get('/ventas', authenticate, getAllVentas);
-router.get('/ventas/total-by-current-month', authenticate);
-router.get('/productos', authenticate, getAllProductos);
 router.post('/export-ventas', authenticate, exportVentas);
 
 export default router;

@@ -119,6 +119,28 @@ const Venta = {
       AND estado != 'cancelado'`
     );
     return rows[0];
+  },
+  getCantidadVentasMesActual: async () => {
+    const [rows] = await pool.query(
+      `
+      SELECT COUNT(*) as cantidad_ventas
+      FROM ventas
+      WHERE YEAR(created_at) = YEAR(CURDATE())
+        AND MONTH(created_at) = MONTH(CURDATE())
+        AND estado != 'cancelado'`
+    );
+    return rows[0].cantidad_ventas;
+  },
+  getCantidadVentasMesAnterior: async () => {
+    const [rows] = await pool.query(
+      `
+      SELECT COUNT(*) as cantidad_ventas
+      FROM ventas
+      WHERE YEAR(created_at) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))
+        AND MONTH(created_at) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))
+        AND estado != 'cancelado'`
+    );
+    return rows[0].cantidad_ventas;
   }
 }
 

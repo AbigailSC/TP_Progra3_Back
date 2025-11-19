@@ -1,234 +1,84 @@
-let productos = [];
-const API_BASE = '/api';
+const ventasSemanales = [
+  { dia: 'Lun', monto: 15000 },
+  { dia: 'Mar', monto: 22000 },
+  { dia: 'Mié', monto: 18000 },
+  { dia: 'Jue', monto: 28000 },
+  { dia: 'Vie', monto: 35000 },
+  { dia: 'Sáb', monto: 42000 },
+  { dia: 'Dom', monto: 25000 }
+];
 
-// Verificar autenticación al cargar a
-window.addEventListener('DOMContentLoaded', () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-        window.location.href = '/api/admin/login';
-        return;
+const actividadReciente = [
+  { tiempo: 'Hace 5 min', descripcion: 'Nueva venta registrada - $12,500' },
+  { tiempo: 'Hace 15 min', descripcion: 'Producto "Buzo Negro" actualizado' },
+  { tiempo: 'Hace 1 hora', descripcion: 'Nuevo cliente registrado: María González' },
+  { tiempo: 'Hace 2 horas', descripcion: 'Stock actualizado para 5 productos' },
+  { tiempo: 'Hace 3 horas', descripcion: 'Venta completada - Orden #1543' }
+];
+
+async function cargarDatosAdmin() {
+  const token = localStorage.getItem('token');
+  const response = await fetch('/api/auth/profile', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
     }
-    cargarProductos();
-});
+  });
 
-function showAlert(message, type = 'success') {
-    const alert = document.getElementById('alert');
-    alert.textContent = message;
-    alert.className = `alert alert-${type} show`;
-    
-    setTimeout(() => {
-        alert.classList.remove('show');
-    }, 5000);
+  const { data } = await response.json();
+
+  const adminData = {
+    nombre: data.nombre,
+    email: data.email
+  };
+
+  document.getElementById('admin-nombre').textContent = adminData.nombre;
+  document.getElementById('admin-email').textContent = adminData.email;
+  document.getElementById('admin-inicial').textContent = adminData.nombre.charAt(0);
 }
 
-async function cargarProductos() {
-    const loading = document.getElementById('loading');
-    const tableContainer = document.getElementById('tableContainer');
-    const emptyState = document.getElementById('emptyState');
-    
-    loading.style.display = 'block';
-    tableContainer.style.display = 'none';
-    emptyState.style.display = 'none';
+function renderChart() {
+  const chartContainer = document.getElementById('ventas-chart');
+  const maxMonto = Math.max(...ventasSemanales.map(v => v.monto));
 
-    try {
-        const token = localStorage.getItem('token');
-        const response = await fetch(`${API_BASE}/productos`, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-
-        if (response.status === 401) {
-            window.location.href = '/api/admin/login';
-            return;
-        }
-
-        const data = await response.json();
-        
-        // La API devuelve paginación, extraemos los productos
-        productos = data.data?.productos || data.data || [];
-        
-        mostrarProductos();
-    } catch (error) {
-        console.error('Error al cargar productos:', error);
-        showAlert('Error al cargar los productos', 'error');
-        emptyState.style.display = 'block';
-    } finally {
-        loading.style.display = 'none';
-    }
-}
-
-function mostrarProductos() {
-    const tbody = document.getElementById('productosBody');
-    const tableContainer = document.getElementById('tableContainer');
-    const emptyState = document.getElementById('emptyState');
-    const filtro = document.getElementById('filtroEstado').value;
-
-    let productosFiltrados = productos;
-
-    // Aplicar filtro
-    if (filtro === 'activo') {
-        productosFiltrados = productos.filter(p => p.activo === 1 || p.activo === true);
-    } else if (filtro === 'inactivo') {
-        productosFiltrados = productos.filter(p => p.activo === 0 || p.activo === false);
-    }
-
-    if (productosFiltrados.length === 0) {
-        tableContainer.style.display = 'none';
-        emptyState.style.display = 'block';
-        return;
-    }
-
-    tbody.innerHTML = '';
-    productosFiltrados.forEach(producto => {
-        const esActivo = producto.activo === 1 || producto.activo === true;
-        const row = document.createElement('tr');
-        
-        row.innerHTML = `
-            <td>${producto.id}</td>
-            <td>
-                ${producto.url_image 
-                    ? `<img src="${producto.url_image}" class="product-image" alt="${producto.titulo}">` 
-                    : '<span>Sin imagen</span>'}
-            </td>
-            <td>${producto.titulo}</td>
-            <td>${producto.sku || 'N/A'}</td>
-            <td>$${Number(producto.precio).toLocaleString()}</td>
-            <td>${producto.stock || 0}</td>
-            <td>
-                <span class="badge ${esActivo ? 'badge-active' : 'badge-inactive'}">
-                    ${esActivo ? 'Activo' : 'Inactivo'}
-                </span>
-            </td>
-            <td>
-                <div style="display: flex; gap: 5px;">
-                    <button class="btn btn-primary btn-small" onclick="editarProducto(${producto.id})">
-                        Editar
-                    </button>
-                    ${esActivo 
-                        ? `<button class="btn btn-danger btn-small" onclick="confirmarEliminar(${producto.id})">Eliminar</button>`
-                        : `<button class="btn btn-success btn-small" onclick="confirmarActivar(${producto.id})">Activar</button>`
-                    }
-                </div>
-            </td>
+  chartContainer.innerHTML = ventasSemanales.map(venta => {
+    const altura = (venta.monto / maxMonto) * 100;
+    return `
+          <div class="bar" style="height: ${altura}%">
+            <div class="bar-value">$${(venta.monto / 1000).toFixed(0)}k</div>
+            <div class="bar-label">${venta.dia}</div>
+          </div>
         `;
-        
-        tbody.appendChild(row);
-    });
-
-    tableContainer.style.display = 'block';
-    emptyState.style.display = 'none';
+  }).join('');
 }
 
-function agregarProducto() {
-    window.location.href = '/api/admin/producto-form';
+function renderActivity() {
+  const activityContainer = document.getElementById('actividad-container');
+  activityContainer.innerHTML = actividadReciente.map(item => `
+        <div class="activity-item">
+          <div class="activity-time">${item.tiempo}</div>
+          <div class="activity-description">${item.descripcion}</div>
+        </div>
+      `).join('');
 }
 
-function editarProducto(id) {
-    window.location.href = `/api/admin/producto-form?id=${id}`;
+async function cargarEstadisticas() {
+  try {
+    console.log('Dashboard cargado');
+  } catch (error) {
+    console.error('Error cargando estadísticas:', error);
+  }
 }
 
-function confirmarEliminar(id) {
-    mostrarModal(
-        'Confirmar eliminación',
-        '¿Está seguro de que desea eliminar este producto? El producto pasará a estado inactivo.',
-        () => eliminarProducto(id)
-    );
-}
-
-function confirmarActivar(id) {
-    mostrarModal(
-        'Confirmar activación',
-        '¿Está seguro de que desea activar este producto?',
-        () => activarProducto(id)
-    );
-}
-
-async function eliminarProducto(id) {
-    try {
-        const token = localStorage.getItem('token');
-        const response = await fetch(`${API_BASE}/productos/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            showAlert('Producto eliminado exitosamente', 'success');
-            await cargarProductos();
-        } else {
-            showAlert(data.message || 'Error al eliminar el producto', 'error');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        showAlert('Error al eliminar el producto', 'error');
-    } finally {
-        cerrarModal();
-    }
-}
-
-async function activarProducto(id) {
-    try {
-        const token = localStorage.getItem('token');
-        const response = await fetch(`${API_BASE}/productos/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ activo: 1 })
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            showAlert('Producto activado exitosamente', 'success');
-            await cargarProductos();
-        } else {
-            showAlert(data.message || 'Error al activar el producto', 'error');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        showAlert('Error al activar el producto', 'error');
-    } finally {
-        cerrarModal();
-    }
-}
-
-function mostrarModal(titulo, mensaje, callback) {
-    const modal = document.getElementById('modalConfirm');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalMessage = document.getElementById('modalMessage');
-    const btnConfirmar = document.getElementById('btnConfirmar');
-
-    modalTitle.textContent = titulo;
-    modalMessage.textContent = mensaje;
-    
-    // Remover listeners anteriores
-    const newBtn = btnConfirmar.cloneNode(true);
-    btnConfirmar.parentNode.replaceChild(newBtn, btnConfirmar);
-    
-    newBtn.addEventListener('click', callback);
-    
-    modal.classList.add('show');
-}
-
-function cerrarModal() {
-    const modal = document.getElementById('modalConfirm');
-    modal.classList.remove('show');
-}
-
-function cerrarSesion() {
-    localStorage.removeItem('token');
-    window.location.href = '/api/admin/login';
-}
-
-// Cerrar modal al hacer clic fuera
-document.getElementById('modalConfirm').addEventListener('click', (e) => {
-    if (e.target.id === 'modalConfirm') {
-        cerrarModal();
-    }
+window.addEventListener('DOMContentLoaded', () => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    window.location.href = '/api/admin/login-view';
+    return;
+  }
+  cargarDatosAdmin();
+  renderChart();
+  renderActivity();
+  cargarEstadisticas();
 });
