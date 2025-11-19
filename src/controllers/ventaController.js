@@ -13,7 +13,7 @@ export const createVenta = async (req, res, next) => {
       return sendResponse(res, 400, 'Errores de validación', validationErrors);
     }
 
-    const carrito = await CarritoModel.getById(idCarrito);
+    const [carrito] = await CarritoModel.getById(idCarrito);
 
     if (!carrito) {
       return sendResponse(res, 404, 'No se encontro el carrito')

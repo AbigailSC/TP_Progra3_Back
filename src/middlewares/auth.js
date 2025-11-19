@@ -22,7 +22,7 @@ export const authenticate = async (req, res, next) => {
     if (!usuario) {
       return res.status(401).json({ status: 401, message: 'Usuario no encontrado' });
     }
-    req.usuario = usuario;
+    req.usuario = usuario.id;
     next();
   } catch (error) {
     return res.status(401).json({ status: 401, message: 'Token inválido o expirado' });

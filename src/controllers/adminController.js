@@ -4,6 +4,8 @@ import VentaModel from '../models/Venta.js';
 import ProductoModel from '../models/Producto.js'
 import TipoModel from '../models/Tipo.js'
 
+import { sendResponse } from '../utils/customResponse.js';
+
 export const getAllVentas = async (req, res, next) => {
   try {
     let ventas = await VentaModel.getAll();
@@ -94,6 +96,40 @@ export const exportVentas = async (req, res, next) => {
     );
 
     res.send(excelBuffer);
+  } catch (error) {
+    next();
+  }
+}
+
+export const login = async (req, res, next) => {
+  try {
+    res.render('login');
+  } catch (error) {
+    next();
+  }
+}
+
+export const dashboard = async (req, res, next) => {
+  try {
+    const totalVentasMesActual = await VentaModel.getTotalVentasMesActual();
+    const totalVentasMesPasado = await VentaModel.getVentasMesAnterior();
+
+    const diferencia = totalVentasMesActual.total_vendido - totalVentasMesPasado.total_vendido;
+    let porcentaje;
+    if (totalVentasMesPasado.cantidad_ventas == 0) {
+      porcentaje = 100;
+    } else {
+      porcentaje = (diferencia / totalVentasMesPasado.total_vendido) * 100
+    }
+
+    const ventas_mes = {
+      total: totalVentasMesActual.total_vendido,
+      variacion: porcentaje.toFixed(2) + '%',
+      tipo: porcentaje >= 0 ? "aumento" : "descuento",
+      diferencia
+    }
+
+    res.render('dashboard', { ventas_mes });
   } catch (error) {
     next();
   }

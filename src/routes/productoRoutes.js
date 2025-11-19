@@ -9,7 +9,7 @@ router.get('/', getAllProductos);
 router.post('/', authenticate, createProducto);
 router.get('/:id', getProductoById);
 router.put('/:id', authenticate, updateProducto);
-router.delete('/:id', authenticate, deleteProducto);
+router.patch('/:id', authenticate, deleteProducto);
 router.post('/:id/upload-image', authenticate, upload.single('imagen'), uploadProductoImage);
 
 export default router;

@@ -33,8 +33,7 @@ export const login = async (req, res, next) => {
 
 export const getProfile = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const usuario = await UsuarioModel.getById(id);
+    const usuario = await UsuarioModel.getById(req.usuario);
     if (!usuario) {
       return sendResponse(res, 404, 'Usuario no encontrado');
     }

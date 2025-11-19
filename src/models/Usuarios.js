@@ -14,7 +14,7 @@ const UsuarioModel = {
     return results[0];
   },
   create: async (usuario) => {
-    const { nombre, email, password, admin = false } = usuario;
+    const { nombre, email, password, admin = true } = usuario;
 
     const [result] = await pool.query(
       'INSERT INTO usuarios (nombre, email, password, admin) VALUES (?, ?, ?, ?)',
