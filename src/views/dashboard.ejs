@@ -31,7 +31,7 @@
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-icon">💰</div>
-          <div class="stat-value" id="total-ventas">$<%= total_ventas_mes.total %></div>
+          <div class="stat-value" id="total-ventas">$<%= total_ventas_mes.cantidad %></div>
           <div class="stat-label">Ventas del Mes</div>
           <div
             class="stat-change <%= total_ventas_mes.tipo === 'aumento' ? 'positive' : 'negative' %>"
@@ -106,12 +106,6 @@
         <div class="chart-container">
           <div class="bar-chart" id="ventas-chart">
           </div>
-        </div>
-      </div>
-
-      <div class="activity-section">
-        <h3>📋 Actividad Reciente</h3>
-        <div id="actividad-container">
         </div>
       </div>
       <script src="/js/dashboard.js"></script>

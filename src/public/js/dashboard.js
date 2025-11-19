@@ -6,7 +6,7 @@ const actividadReciente = [
   { tiempo: 'Hace 3 horas', descripcion: 'Venta completada - Orden #1543' }
 ];
 
-async function cargarDatosAdmin() {
+async function validarAuthToken() {
   const token = localStorage.getItem('token');
   const response = await fetch('/api/auth/profile', {
     method: 'GET',
@@ -16,16 +16,20 @@ async function cargarDatosAdmin() {
     }
   });
 
-  const { data } = await response.json();
+  const data = await response.json();
 
-  const adminData = {
-    nombre: data.nombre,
-    email: data.email
-  };
-
-  document.getElementById('admin-nombre').textContent = adminData.nombre;
-  document.getElementById('admin-email').textContent = adminData.email;
-  document.getElementById('admin-inicial').textContent = adminData.nombre.charAt(0);
+  if (data.status !== 401) {
+    const adminData = {
+      nombre: data.data.nombre,
+      email: data.data.email
+    };
+    document.getElementById('admin-nombre').textContent = adminData.nombre;
+    document.getElementById('admin-email').textContent = adminData.email;
+    document.getElementById('admin-inicial').textContent = adminData.nombre.charAt(0);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 function generarUltimos7dais() {
@@ -87,7 +91,7 @@ async function generarArrayVentas() {
 async function renderChart() {
   const ventasSemanales = await generarArrayVentas();
   const chartContainer = document.getElementById('ventas-chart');
-  const maxMonto = Math.max(...ventasSemanales.map(v => v.monto));
+  const maxMonto = Math.max(...ventasSemanales.map(v => v.monto)); // monto maximo de las barras
 
   chartContainer.innerHTML = ventasSemanales.map((venta) => {
     const altura = (venta.monto / maxMonto) * 100;
@@ -103,11 +107,11 @@ async function renderChart() {
 function renderActivity() {
   const activityContainer = document.getElementById('actividad-container');
   activityContainer.innerHTML = actividadReciente.map(item => `
-        <div class="activity-item">
-          <div class="activity-time">${item.tiempo}</div>
-          <div class="activity-description">${item.descripcion}</div>
-        </div>
-      `).join('');
+    <div class="activity-item">
+      <div class="activity-time">${item.tiempo}</div>
+      <div class="activity-description">${item.descripcion}</div>
+    </div>
+  `).join('');
 }
 
 async function cargarEstadisticas() {
@@ -118,13 +122,12 @@ async function cargarEstadisticas() {
   }
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-  const token = localStorage.getItem('token');
-  if (!token) {
+window.addEventListener('DOMContentLoaded', async () => {
+  const authValid = await validarAuthToken();
+  if (!authValid) {
     window.location.href = '/api/admin/login-view';
     return;
   }
-  cargarDatosAdmin();
   renderChart();
   renderActivity();
   cargarEstadisticas();

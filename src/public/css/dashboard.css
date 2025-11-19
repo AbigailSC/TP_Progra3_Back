@@ -195,43 +195,6 @@ body {
   font-size: 0.9rem;
 }
 
-/* Recent Activity */
-.activity-section {
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.activity-section h3 {
-  color: #333;
-  margin-bottom: 20px;
-  font-size: 1.5rem;
-}
-
-.activity-item {
-  padding: 15px;
-  border-left: 3px solid #667eea;
-  margin-bottom: 15px;
-  background-color: #f9f9f9;
-  border-radius: 4px;
-}
-
-.activity-item:last-child {
-  margin-bottom: 0;
-}
-
-.activity-time {
-  color: #999;
-  font-size: 0.85rem;
-  margin-bottom: 5px;
-}
-
-.activity-description {
-  color: #333;
-  font-size: 0.95rem;
-}
-
 /* Responsive */
 @media (max-width: 768px) {
   .header {
