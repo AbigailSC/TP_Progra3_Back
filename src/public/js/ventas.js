@@ -1,7 +1,6 @@
-let productos = [];
+let ventas = [];
 const API_BASE = '/api';
 
-// Verificar autenticación al cargar a
 window.addEventListener('DOMContentLoaded', async () => {
   const token = localStorage.getItem('token');
   const response = await fetch('/api/auth/profile', {
@@ -15,7 +14,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   const data = await response.json();
 
   if (data.status !== 401) {
-    await cargarProductos();
+    await cargarVentas();
   } else {
     window.location.href = '/api/admin/login-view';
     return;
@@ -32,7 +31,7 @@ function showAlert(message, type = 'success') {
   }, 5000);
 }
 
-async function cargarProductos() {
+async function cargarVentas() {
   const loading = document.getElementById('loading');
   const tableContainer = document.getElementById('tableContainer');
   const emptyState = document.getElementById('emptyState');
@@ -43,7 +42,7 @@ async function cargarProductos() {
 
   try {
     const token = localStorage.getItem('token');
-    const response = await fetch(`${API_BASE}/productos`, {
+    const response = await fetch(`${API_BASE}/ventas`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -57,9 +56,9 @@ async function cargarProductos() {
     const data = await response.json();
 
     // La API devuelve paginación, extraemos los productos
-    productos = data.data?.productos || data.data || [];
+    ventas = data?.data || data.data || [];
 
-    mostrarProductos();
+    mostrarVentas();
   } catch (error) {
     console.error('Error al cargar productos:', error);
     showAlert('Error al cargar los productos', 'error');
@@ -69,58 +68,63 @@ async function cargarProductos() {
   }
 }
 
-function mostrarProductos() {
+function mostrarVentas() {
   const tbody = document.getElementById('productosBody');
   const tableContainer = document.getElementById('tableContainer');
   const emptyState = document.getElementById('emptyState');
   const filtro = document.getElementById('filtroEstado').value;
 
-  let productosFiltrados = productos;
+  let ventasFiltrados = ventas;
 
   // Aplicar filtro
   if (filtro === 'activo') {
-    productosFiltrados = productos.filter(p => p.activo === 1 || p.activo === true);
+    ventasFiltrados = productos.filter(p => p.activo === 1 || p.activo === true);
   } else if (filtro === 'inactivo') {
-    productosFiltrados = productos.filter(p => p.activo === 0 || p.activo === false);
+    ventasFiltrados = productos.filter(p => p.activo === 0 || p.activo === false);
   }
 
-  if (productosFiltrados.length === 0) {
+  if (ventasFiltrados.length === 0) {
     tableContainer.style.display = 'none';
     emptyState.style.display = 'block';
     return;
   }
+  console.log("🚀 ~ mostrarVentas ~ ventasFiltrados:", ventasFiltrados)
 
   tbody.innerHTML = '';
-  productosFiltrados.forEach(producto => {
-    const esActivo = producto.activo === 1 || producto.activo === true;
+  ventasFiltrados.forEach(venta => {
+    let badgeEstado;
+    switch (venta.estado.toLowerCase()) {
+      case 'pendiente':
+        badgeEstado = 'badge-pendiente';
+        break;
+      case 'procesando':
+        badgeEstado = 'badge-procesando';
+        break;
+      case 'completado':
+        badgeEstado = 'badge-completado';
+        break;
+      default:
+        badgeEstado = 'badge-cancelado';
+    }
     const row = document.createElement('tr');
 
     row.innerHTML = `
-            <td>${producto.id}</td>
+            <td>${venta.id}</td>
+            <td>${venta.nombre || 'Invitado'}</td>
+            <td>${venta.metodo_pago.charAt(0).toUpperCase() + venta.metodo_pago.slice(1).toLowerCase()}</td>
+            <td>$${Number(venta.total).toLocaleString()}</td>
+            <td>${new Date(venta.created_at).toLocaleDateString('es-AR')}</td>
             <td>
-                ${producto.url_image
-        ? `<img src="${producto.url_image}" class="product-image" alt="${producto.titulo}">`
-        : '<span>Sin imagen</span>'}
-            </td>
-            <td>${producto.titulo}</td>
-            <td>${producto.sku || 'N/A'}</td>
-            <td>$${Number(producto.precio).toLocaleString()}</td>
-            <td>${producto.stock || 0}</td>
-            <td>
-                <span class="badge ${esActivo ? 'badge-active' : 'badge-inactive'}">
-                    ${esActivo ? 'Activo' : 'Inactivo'}
-                </span>
+              <span class="badge ${badgeEstado}">
+                ${venta.estado.charAt(0).toUpperCase() + venta.estado.slice(1).toLowerCase()}
+              </span>
             </td>
             <td>
-                <div style="display: flex; gap: 5px;">
-                    <button class="btn btn-primary btn-small" onclick="editarProducto(${producto.id})">
-                        Editar
-                    </button>
-                    ${esActivo
-        ? `<button class="btn btn-danger btn-small" onclick="confirmarEliminar(${producto.id})">Eliminar</button>`
-        : `<button class="btn btn-success btn-small" onclick="confirmarActivar(${producto.id})">Activar</button>`
-      }
-                </div>
+              <div style="display: flex; gap: 5px;">
+                <button class="btn btn-primary btn-small" onclick="editarProducto(${venta.id})">
+                  Editar
+                </button>
+              </div>
             </td>
         `;
 
@@ -169,7 +173,7 @@ async function eliminarProducto(id) {
 
     if (response.ok) {
       showAlert('Producto eliminado exitosamente', 'success');
-      await cargarProductos();
+      await cargarVentas();
     } else {
       showAlert(data.message || 'Error al eliminar el producto', 'error');
     }
@@ -197,7 +201,7 @@ async function activarProducto(id) {
 
     if (response.ok) {
       showAlert('Producto activado exitosamente', 'success');
-      await cargarProductos();
+      await cargarVentas();
     } else {
       showAlert(data.message || 'Error al activar el producto', 'error');
     }
@@ -232,9 +236,8 @@ function cerrarModal() {
   modal.classList.remove('show');
 }
 
-function cerrarSesion() {
-  localStorage.removeItem('token');
-  window.location.href = '/api/admin/login';
+function volverDashboard() {
+  window.location.href = '/api/admin/dashboard-view';
 }
 
 // Cerrar modal al hacer clic fuera
