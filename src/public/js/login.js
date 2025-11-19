@@ -52,7 +52,7 @@ loginForm.addEventListener('submit', async (e) => {
 
             // Redirigir al dashboard después de un breve delay
             setTimeout(() => {
-                window.location.href = '/api/admin/dashboard';
+                window.location.href = '/api/admin/dashboard-view';
             }, 1000);
         } else {
 
