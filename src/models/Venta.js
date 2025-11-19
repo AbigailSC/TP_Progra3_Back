@@ -141,6 +141,21 @@ const Venta = {
         AND estado != 'cancelado'`
     );
     return rows[0].cantidad_ventas;
+  },
+  getTotalVentasSemanales: async () => {
+    const [rows] = await pool.query(`
+      SELECT 
+        DATE(created_at) AS fecha,
+        DAYNAME(created_at) AS dia,
+        SUM(total) AS monto
+      FROM ventas
+      WHERE created_at >= CURDATE() - INTERVAL 7 DAY
+        AND created_at < CURDATE() + INTERVAL 1 DAY
+        AND estado != 'cancelado'
+      GROUP BY DATE(created_at), DAYNAME(created_at)
+      ORDER BY DATE(created_at) ASC;
+      `);
+    return rows;
   }
 }
 

@@ -137,10 +137,17 @@ export const dashboard = async (req, res, next) => {
       cant_clientes_nuevos: cantidadClientesNuevos,
       total: totalClientes
     }
-    console.log("🚀 ~ dashboard ~ clientes:", clientes)
-
 
     res.render('dashboard', { total_ventas_mes, productos, cantidad_ventas_mes, clientes });
+  } catch (error) {
+    next();
+  }
+}
+
+export const getVentasSemanales = async (req, res, next) => {
+  try {
+    const ventasSemanales = await VentaModel.getTotalVentasSemanales();
+    return res.json({ ventasSemanales });
   } catch (error) {
     next();
   }
