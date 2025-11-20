@@ -76,6 +76,8 @@ export const getVentasPaginated = async (req, res, next) => {
       orderBy: orderBy,
       order: order
     };
+    console.log("🚀 ~ getVentasPaginated ~ filters:", filters)
+
 
     const { ventas, total } = await VentaModel.getVentasPaginated(page, limit, filters);
 

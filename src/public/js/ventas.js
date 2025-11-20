@@ -1,30 +1,22 @@
 import { renderPaginacion } from './paginacion.js';
+import { validarToken } from './validacionToken.js';
 
 let ventas = [];
 const API_BASE = '/api';
 
+const exportBtn = document.querySelector('.generar-reporte');
+const volverDashboardBtn = document.querySelector('.volver-dashboard');
+
 window.addEventListener('DOMContentLoaded', async () => {
-  const exportBtn = document.querySelector('.generar-reporte');
-
-  const token = localStorage.getItem('token');
-  const response = await fetch('/api/auth/profile', {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    }
-  });
-
-  const data = await response.json();
-
-  if (data.status !== 401) {
+  const usuarioValido = await validarToken();
+  if (usuarioValido) {
     await cargarVentas();
+    exportBtn.addEventListener('click', exportarReporte);
+    volverDashboardBtn.addEventListener('click', volverDashboard);
   } else {
     window.location.href = '/api/admin/login-view';
     return;
   }
-
-  exportBtn.addEventListener('click', exportarReporte);
 });
 
 function showAlert(message, type = 'success') {
@@ -37,10 +29,12 @@ function showAlert(message, type = 'success') {
   }, 5000);
 }
 
-async function cargarVentas() {
+async function cargarVentas(filtro = '', pagina = 1) {
   const loading = document.getElementById('loading');
   const tableContainer = document.getElementById('tableContainer');
   const emptyState = document.getElementById('emptyState');
+
+  console.log("🚀 ~ cargarVentas ~ filtro:", filtro)
 
   loading.style.display = 'block';
   tableContainer.style.display = 'none';
@@ -48,7 +42,7 @@ async function cargarVentas() {
 
   try {
     const token = localStorage.getItem('token');
-    const response = await fetch(`${API_BASE}/ventas`, {
+    const response = await fetch(`${API_BASE}/ventas?page=${pagina}&estado=${filtro}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -60,7 +54,6 @@ async function cargarVentas() {
     }
 
     const { data } = await response.json();
-    console.log("🚀 ~ cargarVentas ~ data:", data)
 
     ventas = data?.ventas || [];
 
@@ -79,23 +72,8 @@ function mostrarVentas() {
   const tbody = document.getElementById('productosBody');
   const tableContainer = document.getElementById('tableContainer');
   const emptyState = document.getElementById('emptyState');
-  const filtro = document.getElementById('filtroEstado').value;
 
   let ventasFiltrados = ventas;
-
-  // Aplicar filtro
-  if (filtro === 'activo') {
-    ventasFiltrados = productos.filter(p => p.activo === 1 || p.activo === true);
-  } else if (filtro === 'inactivo') {
-    ventasFiltrados = productos.filter(p => p.activo === 0 || p.activo === false);
-  }
-
-  if (ventasFiltrados.length === 0) {
-    tableContainer.style.display = 'none';
-    emptyState.style.display = 'block';
-    return;
-  }
-  console.log("🚀 ~ mostrarVentas ~ ventasFiltrados:", ventasFiltrados)
 
   tbody.innerHTML = '';
   ventasFiltrados.forEach(venta => {
@@ -297,4 +275,9 @@ document.getElementById('modalConfirm').addEventListener('click', (e) => {
   if (e.target.id === 'modalConfirm') {
     cerrarModal();
   }
+});
+
+document.getElementById('filtroEstado').addEventListener('change', async (e) => {
+  const filtro = e.target.value;
+  await cargarVentas(filtro);
 });

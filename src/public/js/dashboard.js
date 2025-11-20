@@ -83,8 +83,6 @@ async function generarArrayVentas() {
       monto: ventaEncontrada ? parseFloat(ventaEncontrada.monto) : 0
     }
   });
-  console.log("🚀 ~ generarArrayVentas ~ ventasMapeadas:", ventasMapeadas)
-
   return ventasMapeadas;
 }
 
@@ -104,15 +102,15 @@ async function renderChart() {
   }).join('');
 }
 
-function renderActivity() {
-  const activityContainer = document.getElementById('actividad-container');
-  activityContainer.innerHTML = actividadReciente.map(item => `
-    <div class="activity-item">
-      <div class="activity-time">${item.tiempo}</div>
-      <div class="activity-description">${item.descripcion}</div>
-    </div>
-  `).join('');
-}
+// function renderActivity() {
+//   const activityContainer = document.getElementById('actividad-container');
+//   activityContainer.innerHTML = actividadReciente.map(item => `
+//     <div class="activity-item">
+//       <div class="activity-time">${item.tiempo}</div>
+//       <div class="activity-description">${item.descripcion}</div>
+//     </div>
+//   `).join('');
+// }
 
 async function cargarEstadisticas() {
   try {
@@ -129,6 +127,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     return;
   }
   renderChart();
-  renderActivity();
+  //renderActivity();
   cargarEstadisticas();
 });
