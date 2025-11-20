@@ -23,12 +23,67 @@ const Venta = {
 
     return rows[0] || null;
   },
-  getAll: async () => {
-    const [rows] = await pool.query(
-      'SELECT v.*, c.nombre FROM ventas v LEFT JOIN clientes c ON v.id_cliente = c.id ORDER BY v.created_at DESC'
-    );
+  getVentasPaginated: async (page = 1, limit = 10, filters = {}) => {
+    const offset = (page - 1) * limit;
 
-    return rows;
+    let query = `
+      SELECT v.*, c.nombre as cliente_nombre 
+      FROM ventas v
+      LEFT JOIN clientes c ON v.id_cliente = c.id
+    `;
+    let countQuery = 'SELECT COUNT(*) as total FROM ventas v';
+    const params = [];
+    const whereClauses = [];
+
+    if (filters.estado) {
+      whereClauses.push('v.estado LIKE ?');
+      params.push(`%${filters.estado}%`);
+    }
+
+    if (filters.metodo_pago) {
+      whereClauses.push('v.metodo_pago LIKE ?');
+      params.push(`%${filters.metodo_pago}%`);
+    }
+
+    if (filters.precio_min) {
+      whereClauses.push('v.precio >= ?');
+      params.push(filters.precio_min);
+    }
+
+    if (filters.precio_max) {
+      whereClauses.push('v.precio <= ?');
+      params.push(filters.precio_max);
+    }
+
+    if (whereClauses.length > 0) {
+      const whereString = ' WHERE ' + whereClauses.join(' AND ');
+      query += whereString;
+      countQuery += whereString;
+    }
+
+    const allowedOrderField = {
+      id: 'v.id',
+      total: 'v.total',
+      created_at: 'v.created_at'
+    }
+
+    const orderBy = allowedOrderField[filters.orderBy] || 'id';
+    const order = filters.order === 'ASC' ? 'ASC' : 'DESC';
+
+    query += ` ORDER BY ${orderBy} ${order}`;
+
+    query += ' LIMIT ? OFFSET ?';
+    params.push(limit, offset);
+
+    const [ventas] = await pool.query(query, params);
+
+    const countParams = params.slice(0, - 2);
+    const [[{ total }]] = await pool.query(countQuery, countParams);
+
+    return {
+      ventas,
+      total
+    }
   },
   getByCliente: async (idCliente) => {
     const [rows] = await pool.query(
@@ -155,6 +210,14 @@ const Venta = {
       GROUP BY DATE(created_at), DAYNAME(created_at)
       ORDER BY DATE(created_at) ASC;
       `);
+    return rows;
+  },
+  getAll: async () => {
+    const [rows] = await pool.query(`
+      SELECT v.*, c.nombre as cliente_nombre 
+      FROM ventas v
+      LEFT JOIN clientes c ON v.id_cliente = c.id
+    `);
     return rows;
   }
 }

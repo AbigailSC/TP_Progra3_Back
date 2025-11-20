@@ -1,7 +1,11 @@
+import { renderPaginacion } from './paginacion.js';
+
 let ventas = [];
 const API_BASE = '/api';
 
 window.addEventListener('DOMContentLoaded', async () => {
+  const exportBtn = document.querySelector('.generar-reporte');
+
   const token = localStorage.getItem('token');
   const response = await fetch('/api/auth/profile', {
     method: 'GET',
@@ -19,6 +23,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     window.location.href = '/api/admin/login-view';
     return;
   }
+
+  exportBtn.addEventListener('click', exportarReporte);
 });
 
 function showAlert(message, type = 'success') {
@@ -53,15 +59,16 @@ async function cargarVentas() {
       return;
     }
 
-    const data = await response.json();
+    const { data } = await response.json();
+    console.log("🚀 ~ cargarVentas ~ data:", data)
 
-    // La API devuelve paginación, extraemos los productos
-    ventas = data?.data || data.data || [];
+    ventas = data?.ventas || [];
 
     mostrarVentas();
+    renderPaginacion(data.pagination);
   } catch (error) {
-    console.error('Error al cargar productos:', error);
-    showAlert('Error al cargar los productos', 'error');
+    console.error('Error al cargar ventas:', error);
+    showAlert('Error al cargar los ventas', 'error');
     emptyState.style.display = 'block';
   } finally {
     loading.style.display = 'none';
@@ -110,7 +117,7 @@ function mostrarVentas() {
 
     row.innerHTML = `
             <td>${venta.id}</td>
-            <td>${venta.nombre || 'Invitado'}</td>
+            <td>${venta.cliente_nombre || 'Invitado'}</td>
             <td>${venta.metodo_pago.charAt(0).toUpperCase() + venta.metodo_pago.slice(1).toLowerCase()}</td>
             <td>$${Number(venta.total).toLocaleString()}</td>
             <td>${new Date(venta.created_at).toLocaleDateString('es-AR')}</td>
@@ -121,9 +128,14 @@ function mostrarVentas() {
             </td>
             <td>
               <div style="display: flex; gap: 5px;">
-                <button class="btn btn-primary btn-small" onclick="editarProducto(${venta.id})">
+                <button class="btn btn-primary btn-small" onclick="editarVenta(${venta.id})">
                   Editar
                 </button>
+                <div style="display: flex; gap: 5px;">
+                  <button class="btn btn-secondary btn-small" onclick="verDetalles(${venta.id})">
+                    Ver detalles
+                  </button>
+                </div>
               </div>
             </td>
         `;
@@ -135,8 +147,48 @@ function mostrarVentas() {
   emptyState.style.display = 'none';
 }
 
-function agregarProducto() {
-  window.location.href = '/api/admin/producto-form';
+async function exportarReporte(e) {
+  const token = localStorage.getItem('token');
+  try {
+    const button = e.target;
+    const originalText = button.textContent;
+    button.textContent = 'Exportando...';
+    button.disabled = true;
+
+    const response = await fetch('/api/admin/export-ventas', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Error al exportar el reporte');
+    }
+
+    const blob = await response.blob();
+
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.style.display = 'none';
+    link.href = url;
+
+    const filename = `reporte_ventas ${new Date().toISOString().split('T')[0]} .xlsx`;
+
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+    button.textContent = originalText;
+    button.disabled = false;
+
+    showAlert('Reporte exportado exitosamente', 'success');
+  } catch (error) {
+    console.error('Error al descargar el reporte de ventas:', error);
+    showAlert('Error al descargar el reporte de ventas', 'error');
+  }
 }
 
 function editarProducto(id) {

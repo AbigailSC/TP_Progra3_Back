@@ -11,7 +11,7 @@
     <div class="header">
       <h1>Panel de Administración - Ventas</h1>
       <div class="actions">
-        <button class="btn btn-success" onclick="agregarProducto()">Exportar Reporte</button>
+        <button class="btn btn-success generar-reporte">Exportar Reporte</button>
         <button class="btn btn-secondary" onclick="volverDashboard()">Volver</button>
       </div>
     </div>
@@ -39,7 +39,7 @@
               <th>ID</th>
               <th>Cliente</th>
               <th>Metodo de Pago</th>
-              <th>Total</th>
+              <th>Monto</th>
               <th>Fecha</th>
               <th>Estado</th>
               <th>Acciones</th>
@@ -47,13 +47,21 @@
           </thead>
           <tbody id="productosBody"></tbody>
         </table>
+        <div id="paginacion" class="paginacion"></div>
       </div>
-
+      
       <div id="emptyState" class="empty-state" style="display: none">
         No hay ventas para mostrar
       </div>
     </div>
-
+    
+    <div class="resumen">
+      <p><strong>Total de ventas:</strong> <%= ventasPaginated.ventas.length %></p>
+      <p>
+        <strong>Monto total:</strong> $<%= ventasPaginated.ventas.reduce((sum, v) => sum + Number(v.total),
+        0).toFixed(2) %>
+      </p>
+    </div>
     <!-- Modal de confirmación -->
     <div id="modalConfirm" class="modal">
       <div class="modal-content">
@@ -69,13 +77,6 @@
         </div>
       </div>
     </div>
-    <div class="resumen">
-      <p><strong>Total de ventas:</strong> <%= ventas.length %></p>
-      <p>
-        <strong>Monto total:</strong> $<%= ventas.reduce((sum, v) => sum + Number(v.total),
-        0).toFixed(2) %>
-      </p>
-    </div>
-    <script src="/js/ventas.js"></script>
+    <script type="module" src="/js/ventas.js"></script>
   </body>
 </html>

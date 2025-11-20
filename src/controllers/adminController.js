@@ -5,20 +5,57 @@ import ProductoModel from '../models/Producto.js';
 import TipoModel from '../models/Tipo.js';
 import ClienteModel from '../models/Cliente.js';
 
+import { validatePaginationParams, validateOrderBy, validateOrder, VENTA_ORDER_FIELDS } from '../utils/pagination.js';
 import { getInfoVentasMes } from '../utils/ventasHelper.js';
 
 export const getAllVentas = async (req, res, next) => {
   try {
-    let ventas = await VentaModel.getAll();
-    // TODO agregar filtros y ordenamiento
-    ventas = ventas.map((venta) => ({
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    const validation = validatePaginationParams(page, limit);
+
+    if (!validation.isValid) {
+      return sendResponse(res, 400, 'Parámetros de paginación inválidos', validation.errors);
+    }
+
+    const orderBy = validateOrderBy(req.query.order_by, VENTA_ORDER_FIELDS);
+    const order = validateOrder(req.query.order);
+
+    const filters = {
+      precio_min: req.query.precio_min ? parseFloat(req.query.precio_min) : null,
+      precio_max: req.query.precio_max ? parseFloat(req.query.precio_max) : null,
+      estado: req.query.estado || null,
+      metodo_pago: req.query.metodo_pago || null,
+      orderBy: orderBy,
+      order: order
+    };
+
+    const { ventas, total } = await VentaModel.getVentasPaginated(page, limit, filters);
+
+    const totalPages = Math.ceil(total / limit);
+    const hasNextPage = page < totalPages;
+    const hasPrevPage = page > 1;
+
+    const ventasPaginated = {
+      ventas,
+      pagination: {
+        currentPage: page,
+        pageSize: limit,
+        totalItems: total,
+        totalPages: totalPages,
+        hasNextPage: hasNextPage,
+        hasPrevPage: hasPrevPage
+      }
+    }
+    ventasPaginated.ventas = ventas.map((venta) => ({
       ...venta,
       metodo_pago: venta.metodo_pago.charAt(0).toUpperCase() + venta.metodo_pago.slice(1),
       estado: venta.estado.charAt(0).toUpperCase() + venta.estado.slice(1),
       total: parseFloat(venta.total)
     }));
 
-    res.render('ventas', { ventas });
+    res.render('ventas', { ventasPaginated });
   } catch (error) {
     next(error)
   }

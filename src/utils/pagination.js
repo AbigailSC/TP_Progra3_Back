@@ -40,3 +40,9 @@ export const PRODUCTO_ORDER_FIELDS = {
   'precio': 'precio',
   'created_at': 'created_at',
 };
+
+export const VENTA_ORDER_FIELDS = {
+  'id': 'id',
+  'total': 'total',
+  'created_at': 'created_at',
+};
