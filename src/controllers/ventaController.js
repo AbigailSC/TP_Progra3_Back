@@ -42,7 +42,7 @@ export const getVentaById = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const venta = await VentaModel.getById(id);
+    const venta = await VentaModel.getByIdWithItems(id);
 
     if (!venta) {
       return sendResponse(res, 404, 'Venta no encontrada');
@@ -76,8 +76,6 @@ export const getVentasPaginated = async (req, res, next) => {
       orderBy: orderBy,
       order: order
     };
-    console.log("🚀 ~ getVentasPaginated ~ filters:", filters)
-
 
     const { ventas, total } = await VentaModel.getVentasPaginated(page, limit, filters);
 

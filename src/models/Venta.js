@@ -94,7 +94,12 @@ const Venta = {
   },
   getByIdWithItems: async (id) => {
     const [venta] = await pool.query(
-      'SELECT * FROM ventas WHERE id = ?',
+      `
+        SELECT v.*, cl.nombre as cliente_nombre
+        FROM ventas v
+        LEFT JOIN clientes cl ON v.id_cliente = cl.id
+        WHERE v.id = ?
+      `,
       [id]
     );
 
@@ -103,7 +108,7 @@ const Venta = {
     const [items] = await pool.query(
       `SELECT ci.*, p.titulo, p.url_image 
       FROM carrito_items ci 
-      JOIN productos p ON ci.id_producto = p.id 
+      JOIN productos p ON ci.id_producto = p.id
       WHERE ci.id_carrito = ?`,
       [venta[0].id_carrito]
     );

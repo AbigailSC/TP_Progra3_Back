@@ -159,7 +159,7 @@ async function eliminarProducto(id) {
   try {
     const token = localStorage.getItem('token');
     const response = await fetch(`${API_BASE}/productos/${id}`, {
-      method: 'DELETE',
+      method: 'PATCH',
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -234,7 +234,7 @@ function cerrarModal() {
 
 function cerrarSesion() {
   localStorage.removeItem('token');
-  window.location.href = '/api/admin/login';
+  window.location.href = '/api/admin/login-view';
 }
 
 // Cerrar modal al hacer clic fuera

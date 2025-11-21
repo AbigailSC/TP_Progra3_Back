@@ -34,8 +34,6 @@ async function cargarVentas(filtro = '', pagina = 1) {
   const tableContainer = document.getElementById('tableContainer');
   const emptyState = document.getElementById('emptyState');
 
-  console.log("🚀 ~ cargarVentas ~ filtro:", filtro)
-
   loading.style.display = 'block';
   tableContainer.style.display = 'none';
   emptyState.style.display = 'none';
@@ -106,14 +104,12 @@ function mostrarVentas() {
             </td>
             <td>
               <div style="display: flex; gap: 5px;">
-                <button class="btn btn-primary btn-small" onclick="editarVenta(${venta.id})">
+                <button class="btn btn-primary btn-small btn-editar" data-id="${venta.id}">
                   Editar
                 </button>
-                <div style="display: flex; gap: 5px;">
-                  <button class="btn btn-secondary btn-small" onclick="verDetalles(${venta.id})">
-                    Ver detalles
-                  </button>
-                </div>
+                <button class="btn btn-secondary btn-small btn-ver-detalles" data-id="${venta.id}">
+                  Ver detalles
+                </button>
               </div>
             </td>
         `;
@@ -169,115 +165,88 @@ async function exportarReporte(e) {
   }
 }
 
-function editarProducto(id) {
-  window.location.href = `/api/admin/producto-form?id=${id}`;
+function editarVenta(id) {
+  document.getElementById('detalleVentaId').textContent = id;
+  document.getElementById('detallesLoading').style.display = 'block';
+  document.getElementById('detallesContent').style.display = 'none';
+  abrirModal('modalDetalles');
 }
 
-function confirmarEliminar(id) {
-  mostrarModal(
-    'Confirmar eliminación',
-    '¿Está seguro de que desea eliminar este producto? El producto pasará a estado inactivo.',
-    () => eliminarProducto(id)
-  );
-}
+async function verDetalles(id) {
+  document.getElementById('detalleVentaId').textContent = id;
+  document.getElementById('detallesLoading').style.display = 'block';
+  document.getElementById('detallesContent').style.display = 'none';
+  abrirModal('modalDetalles');
 
-function confirmarActivar(id) {
-  mostrarModal(
-    'Confirmar activación',
-    '¿Está seguro de que desea activar este producto?',
-    () => activarProducto(id)
-  );
-}
-
-async function eliminarProducto(id) {
   try {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${API_BASE}/productos/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
+    const response = await fetch(`${API_BASE}/ventas/${id}`);
+    const { data } = await response.json();
+
+    document.getElementById('detalleCliente').textContent = data.cliente_nombre || 'Invitado';
+    document.getElementById('detalleTotal').textContent = `$${Number(data.total).toLocaleString()}`;
+
+    const itemsBody = document.getElementById('detalleItems');
+    itemsBody.innerHTML = '';
+    data.items.forEach((item) => {
+      itemsBody.innerHTML += `
+        <tr>
+          <td>${item.titulo}</td>
+          <td>${item.cantidad}</td>
+          <td>$${Number(item.precio_unitario).toLocaleString()}</td>
+          <td>$${Number(item.subtotal).toLocaleString()}</td>
+        </tr>
+      `;
     });
 
-    const data = await response.json();
-
-    if (response.ok) {
-      showAlert('Producto eliminado exitosamente', 'success');
-      await cargarVentas();
-    } else {
-      showAlert(data.message || 'Error al eliminar el producto', 'error');
-    }
+    document.getElementById('detallesLoading').style.display = 'none';
+    document.getElementById('detallesContent').style.display = 'block';
   } catch (error) {
-    console.error('Error:', error);
-    showAlert('Error al eliminar el producto', 'error');
-  } finally {
-    cerrarModal();
+    console.error('Error al abrir el modal de detales:', error);
+    cerrarModal('modalDetalles');
   }
 }
 
-async function activarProducto(id) {
-  try {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${API_BASE}/productos/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ activo: 1 })
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      showAlert('Producto activado exitosamente', 'success');
-      await cargarVentas();
-    } else {
-      showAlert(data.message || 'Error al activar el producto', 'error');
-    }
-  } catch (error) {
-    console.error('Error:', error);
-    showAlert('Error al activar el producto', 'error');
-  } finally {
-    cerrarModal();
-  }
+function abrirModal(id) {
+  document.getElementById(id).classList.add('active');
 }
 
-function mostrarModal(titulo, mensaje, callback) {
-  const modal = document.getElementById('modalConfirm');
-  const modalTitle = document.getElementById('modalTitle');
-  const modalMessage = document.getElementById('modalMessage');
-  const btnConfirmar = document.getElementById('btnConfirmar');
-
-  modalTitle.textContent = titulo;
-  modalMessage.textContent = mensaje;
-
-  // Remover listeners anteriores
-  const newBtn = btnConfirmar.cloneNode(true);
-  btnConfirmar.parentNode.replaceChild(newBtn, btnConfirmar);
-
-  newBtn.addEventListener('click', callback);
-
-  modal.classList.add('show');
-}
-
-function cerrarModal() {
-  const modal = document.getElementById('modalConfirm');
-  modal.classList.remove('show');
+function cerrarModal(id) {
+  document.getElementById(id).classList.remove('active');
 }
 
 function volverDashboard() {
   window.location.href = '/api/admin/dashboard-view';
 }
 
-// Cerrar modal al hacer clic fuera
-document.getElementById('modalConfirm').addEventListener('click', (e) => {
-  if (e.target.id === 'modalConfirm') {
-    cerrarModal();
-  }
-});
-
 document.getElementById('filtroEstado').addEventListener('change', async (e) => {
   const filtro = e.target.value;
   await cargarVentas(filtro);
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const tbody = document.getElementById('productosBody');
+
+  tbody.addEventListener('click', async (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+
+    const ventaId = btn.dataset.id;
+
+    if (btn.classList.contains('btn-ver-detalles')) {
+      await verDetalles(ventaId);
+    }
+
+    if (btn.classList.contains('btn-editar')) {
+      editarVenta(ventaId);
+    }
+  });
+});
+
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('btn-close-modal')) {
+    const modal = e.target.closest('.modal');
+    if (modal) {
+      cerrarModal(modal.id);
+    }
+  }
 });

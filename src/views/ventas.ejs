@@ -49,18 +49,54 @@
         </table>
         <div id="paginacion" class="paginacion"></div>
       </div>
-      
+
       <div id="emptyState" class="empty-state" style="display: none">
         No hay ventas para mostrar
       </div>
     </div>
-    
+
     <div class="resumen">
       <p><strong>Total de ventas:</strong> <%= ventasPaginated.ventas.length %></p>
       <p>
-        <strong>Monto total:</strong> $<%= ventasPaginated.ventas.reduce((sum, v) => sum + Number(v.total),
-        0).toFixed(2) %>
+        <strong>Monto total:</strong> $<%= ventasPaginated.ventas.reduce((sum, v) => sum +
+        Number(v.total), 0).toFixed(2) %>
       </p>
+    </div>
+    <div id="modalDetalles" class="modal">
+      <div class="modal-content modal-lg">
+        <div class="modal-header">
+          <h2>Detalles de Venta #<span id="detalleVentaId"></span></h2>
+        </div>
+        <div class="modal-body">
+          <div id="detallesLoading" class="loading">Cargando...</div>
+          <div id="detallesContent" style="display: none">
+            <div class="detalle-grid">
+              <div class="detalle-item">
+                <span class="detalle-label">Cliente:</span>
+                <span id="detalleCliente"></span>
+              </div>
+              <div class="detalle-item">
+                <span class="detalle-label">Total:</span>
+                <span id="detalleTotal"></span>
+              </div>
+            </div>
+            <table class="table-detalles">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Cantidad</th>
+                  <th>Precio</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody id="detalleItems"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-close-modal btn-secondary">Cerrar</button>
+        </div>
+      </div>
     </div>
     <!-- Modal de confirmación -->
     <div id="modalConfirm" class="modal">
