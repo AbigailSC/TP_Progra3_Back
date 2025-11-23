@@ -6,12 +6,13 @@
     <title>Administradores - Panel Administrador</title>
     <link rel="stylesheet" href="/css/common.css" />
     <link rel="stylesheet" href="/css/ventas.css" />
+    <link rel="stylesheet" href="/css/administradores.css" />
   </head>
   <body>
     <div class="header">
       <h1>Panel de Administración - Administradores</h1>
       <div class="actions">
-        <button class="btn btn-success generar-reporte">Exportar Reporte</button>
+        <button class="btn btn-success new-admin">Crear Administrador</button>
         <button class="btn btn-secondary volver-dashboard">Volver</button>
       </div>
     </div>
@@ -22,7 +23,7 @@
       <div id="loading" class="loading">Cargando administradores...</div>
 
       <div id="tableContainer" style="display: none">
-        <table id="productosTable">
+        <table id="administradoresTable">
           <thead>
             <tr>
               <th>ID</th>
@@ -31,10 +32,11 @@
               <th>Fecha creacion</th>
               <th>Ultima modificacion</th>
               <th>Creado por</th>
+              <th>Modificado por</th>
               <th>Acciones</th>
             </tr>
           </thead>
-          <tbody id="productosBody"></tbody>
+          <tbody id="administradoresBody"></tbody>
         </table>
         <div id="paginacion" class="paginacion"></div>
       </div>
@@ -44,41 +46,56 @@
       </div>
     </div>
 
-    <div id="modalDetalles" class="modal">
-      <div class="modal-content modal-lg">
+    <div id="modalCreacion" class="modal">
+      <form class="modal-content modal-lg" id="formCreacion">
         <div class="modal-header">
-          <h2>Detalles de Venta #<span id="detalleVentaId"></span></h2>
+          <h2>Crear nuevo administrador</h2>
         </div>
         <div class="modal-body">
-          <div id="detallesLoading" class="loading">Cargando...</div>
-          <div id="detallesContent" style="display: none">
-            <div class="detalle-grid">
-              <div class="detalle-item">
-                <span class="detalle-label">Cliente:</span>
-                <span id="detalleCliente"></span>
-              </div>
-              <div class="detalle-item">
-                <span class="detalle-label">Total:</span>
-                <span id="detalleTotal"></span>
+          <div id="creacionLoading" class="loading">Cargando...</div>
+          <div id="creacionContent" style="display: none">
+            <div class="container">
+              <div class="form-group">
+                <label for="creacionNombre">Nombre:</label>
+                <input type="text" id="creacionNombre" name="nombre" required />
+                <label for="creacionEmail">Email:</label>
+                <input type="email" id="creacionEmail" name="email" required />
+                <label for="creacionPassword">Contraseña:</label>
+                <input type="password" id="creacionPassword" name="password" required />
               </div>
             </div>
-            <table class="table-detalles">
-              <thead>
-                <tr>
-                  <th>Producto</th>
-                  <th>Cantidad</th>
-                  <th>Precio</th>
-                  <th>Subtotal</th>
-                </tr>
-              </thead>
-              <tbody id="detalleItems"></tbody>
-            </table>
           </div>
         </div>
         <div class="modal-footer">
           <button class="btn btn-close-modal btn-secondary">Cerrar</button>
+          <button class="btn btn-close-modal btn-primary" type="submit">Guardar</button>
         </div>
-      </div>
+      </form>
+    </div>
+
+    <div id="modalEdicion" class="modal">
+      <form class="modal-content modal-lg" id="formEdicion">
+        <div class="modal-header">
+          <h2>Editar administrador #<span id="edicionVentaId"></span></h2>
+        </div>
+        <div class="modal-body">
+          <div id="edicionLoading" class="loading">Cargando...</div>
+          <div id="edicionContent" style="display: none">
+            <div class="detalle-grid">
+              <div class="form-group">
+                <label for="edicionNombre">Nombre:</label>
+                <input type="text" id="edicionNombre" name="nombre" />
+                <label for="edicionPassword">Contraseña:</label>
+                <input type="password" id="edicionPassword" name="password" required/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-close-modal btn-secondary">Cerrar</button>
+          <button class="btn btn-close-modal btn-primary" type="submit">Actualizar</button>
+        </div>
+      </form>
     </div>
     <!-- Modal de confirmación -->
     <div id="modalConfirm" class="modal">

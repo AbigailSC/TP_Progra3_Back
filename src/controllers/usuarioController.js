@@ -1,14 +1,39 @@
 import UsuarioModel from "../models/Usuarios.js";
 import { sendResponse } from '../utils/customResponse.js';
+import { validatePaginationParams } from '../utils/pagination.js';
 
 export const getAllUsuarios = async (req, res, next) => {
   try {
-    const usuarios = await UsuarioModel.getAll();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    const validation = validatePaginationParams(page, limit);
+
+    if (!validation.isValid) {
+      return sendResponse(res, 400, 'Parámetros de paginación inválidos', validation.errors);
+    }
+
+    const { usuarios, total } = await UsuarioModel.getAll(page, limit);
+
     if (usuarios.length === 0) {
       return sendResponse(res, 404, 'No se encontraron usuarios');
     }
 
-    return sendResponse(res, 200, 'Usuarios obtenidos exitosamente', usuarios);
+    const totalPages = Math.ceil(total / limit);
+    const hasNextPage = page < totalPages;
+    const hasPrevPage = page > 1;
+
+    return sendResponse(res, 200, 'Usuarios obtenidos exitosamente', {
+      usuarios,
+      pagination: {
+        currentPage: page,
+        pageSize: limit,
+        totalItems: total,
+        totalPages: totalPages,
+        hasNextPage: hasNextPage,
+        hasPrevPage: hasPrevPage
+      }
+    });
   } catch (error) {
     next(error);
   }
@@ -35,6 +60,7 @@ export const updateUsuario = async (req, res, next) => {
     if (!usuario) {
       return sendResponse(res, 404, 'Usuario no encontrado');
     }
+    usuarioData.updatedBy = req.user.id;
     const updatedUsuario = await UsuarioModel.update(id, usuarioData);
     return sendResponse(res, 200, 'Usuario actualizado correctamente', updatedUsuario);
   } catch (error) {

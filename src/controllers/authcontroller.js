@@ -47,9 +47,10 @@ export const register = async (req, res, next) => {
   try {
     const usuarioData = req.body;
     const validationErrors = validateRegister(usuarioData);
+    const userId = req.usuario;
 
     if (validationErrors.length > 0) {
-      return sendResponse(res, 400, 'Errores de validación', validationErrors);
+      return sendResponse(res, 400, 'Errores de validación', { errors: validationErrors });
     }
     const userExists = await UsuarioModel.getByEmail(usuarioData.email);
     if (userExists) {
@@ -58,6 +59,8 @@ export const register = async (req, res, next) => {
 
     const passwordHashed = await hashPassword(usuarioData.password);
     usuarioData.password = passwordHashed;
+    usuarioData.createdBy = userId;
+    usuarioData.updatedBy = userId;
 
     const newUsuario = await UsuarioModel.create(usuarioData);
     return sendResponse(res, 201, 'Usuario registrado exitosamente', newUsuario);

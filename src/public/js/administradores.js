@@ -1,17 +1,17 @@
 import { renderPaginacion } from './paginacion.js';
 import { validarToken } from './validacionToken.js';
 
-let ventas = [];
+let administradores = [];
 const API_BASE = '/api';
 
-const exportBtn = document.querySelector('.generar-reporte');
+const crearAdminBtn = document.querySelector('.new-admin');
 const volverDashboardBtn = document.querySelector('.volver-dashboard');
 
 window.addEventListener('DOMContentLoaded', async () => {
   const usuarioValido = await validarToken();
   if (usuarioValido) {
-    await cargarVentas();
-    exportBtn.addEventListener('click', exportarReporte);
+    await cargarAdmins();
+    crearAdminBtn.addEventListener('click', crearAdmin);
     volverDashboardBtn.addEventListener('click', volverDashboard);
   } else {
     window.location.href = '/api/admin/login-view';
@@ -29,7 +29,7 @@ function showAlert(message, type = 'success') {
   }, 5000);
 }
 
-async function cargarVentas(filtro = '', pagina = 1) {
+async function cargarAdmins(pagina = 1) {
   const loading = document.getElementById('loading');
   const tableContainer = document.getElementById('tableContainer');
   const emptyState = document.getElementById('emptyState');
@@ -40,7 +40,7 @@ async function cargarVentas(filtro = '', pagina = 1) {
 
   try {
     const token = localStorage.getItem('token');
-    const response = await fetch(`${API_BASE}/ventas?page=${pagina}&estado=${filtro}`, {
+    const response = await fetch(`${API_BASE}/usuarios?page=${pagina}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -51,11 +51,15 @@ async function cargarVentas(filtro = '', pagina = 1) {
       return;
     }
 
+    if (!response.ok) {
+      throw new Error('Error al obtener los administradores');
+    }
+
     const { data } = await response.json();
 
-    ventas = data?.ventas || [];
+    administradores = data?.usuarios || [];
 
-    mostrarVentas();
+    mostrarAdmins();
     renderPaginacion(data.pagination);
   } catch (error) {
     console.error('Error al cargar ventas:', error);
@@ -66,54 +70,31 @@ async function cargarVentas(filtro = '', pagina = 1) {
   }
 }
 
-function mostrarVentas() {
-  const tbody = document.getElementById('productosBody');
+function mostrarAdmins() {
+  const tbody = document.getElementById('administradoresBody');
   const tableContainer = document.getElementById('tableContainer');
   const emptyState = document.getElementById('emptyState');
 
-  let ventasFiltrados = ventas;
-
   tbody.innerHTML = '';
-  ventasFiltrados.forEach(venta => {
-    let badgeEstado;
-    switch (venta.estado.toLowerCase()) {
-      case 'pendiente':
-        badgeEstado = 'badge-pendiente';
-        break;
-      case 'procesando':
-        badgeEstado = 'badge-procesando';
-        break;
-      case 'completado':
-        badgeEstado = 'badge-completado';
-        break;
-      default:
-        badgeEstado = 'badge-cancelado';
-    }
+  administradores.forEach(admin => {
     const row = document.createElement('tr');
-
     row.innerHTML = `
-            <td>${venta.id}</td>
-            <td>${venta.cliente_nombre || 'Invitado'}</td>
-            <td>${venta.metodo_pago.charAt(0).toUpperCase() + venta.metodo_pago.slice(1).toLowerCase()}</td>
-            <td>$${Number(venta.total).toLocaleString()}</td>
-            <td>${new Date(venta.created_at).toLocaleDateString('es-AR')}</td>
-            <td>
-              <span class="badge ${badgeEstado}">
-                ${venta.estado.charAt(0).toUpperCase() + venta.estado.slice(1).toLowerCase()}
-              </span>
-            </td>
-            <td>
-              <div style="display: flex; gap: 5px;">
-                <button class="btn btn-primary btn-small btn-editar" data-id="${venta.id}">
-                  Editar
-                </button>
-                <button class="btn btn-secondary btn-small btn-ver-detalles" data-id="${venta.id}">
-                  Ver detalles
-                </button>
-              </div>
-            </td>
-        `;
-
+      <td>${admin.id}</td>
+      <td>${admin.nombre}</td>
+      <td>${admin.email}</td>
+      <td>${new Date(admin.created_at).toLocaleDateString('es-AR')}</td>
+      <td>${new Date(admin.updated_at).toLocaleDateString('es-AR')}</td>
+      <td>${admin.created_by}</td>
+      <td>${admin.updated_by}</td>
+      <td>
+        <div style="display: flex; gap: 5px;">
+          <button class="btn btn-primary btn-small btn-editar" data-id="${admin.id}">
+            Editar
+          </button>
+          <button class="btn btn-danger btn-small btn-eliminar" data-id="${admin.id}">Eliminar</button>
+        </div>
+      </td>
+    `;
     tbody.appendChild(row);
   });
 
@@ -121,88 +102,115 @@ function mostrarVentas() {
   emptyState.style.display = 'none';
 }
 
-async function exportarReporte(e) {
-  const token = localStorage.getItem('token');
-  try {
-    const button = e.target;
-    const originalText = button.textContent;
-    button.textContent = 'Exportando...';
-    button.disabled = true;
+async function crearAdmin() {
+  document.getElementById('creacionLoading').style.display = 'none';
+  document.getElementById('creacionContent').style.display = 'block';
 
-    const response = await fetch('/api/admin/export-ventas', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+  const nombreInput = document.getElementById('creacionNombre');
+  const emailInput = document.getElementById('creacionEmail');
+  const passwordInput = document.getElementById('creacionPassword');
+  const form = document.getElementById('formCreacion');
+
+  abrirModal('modalCreacion');
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    const nombre = nombreInput.value;
+    const email = emailInput.value;
+    const password = passwordInput.value;
+
+    try {
+      const response = await fetch(`${API_BASE}/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ nombre, email, password, admin: true })
+      });
+      const { data } = await response.json();
+
+      if (data.status === 201) {
+        showAlert('Administrador creado correctamente', 'success');
+        cerrarModal('modalCreacion');
+        await cargarAdmins();
+      } else {
+        showAlert('Error al crear administrador: ' + data.errors[0], 'error');
       }
-    });
-
-    if (!response.ok) {
-      throw new Error('Error al exportar el reporte');
+    } catch (error) {
+      console.error('Error al crear el admin:', error);
     }
-
-    const blob = await response.blob();
-
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.style.display = 'none';
-    link.href = url;
-
-    const filename = `reporte_ventas ${new Date().toISOString().split('T')[0]} .xlsx`;
-
-    link.setAttribute('download', filename);
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    window.URL.revokeObjectURL(url);
-    button.textContent = originalText;
-    button.disabled = false;
-
-    showAlert('Reporte exportado exitosamente', 'success');
-  } catch (error) {
-    console.error('Error al descargar el reporte de ventas:', error);
-    showAlert('Error al descargar el reporte de ventas', 'error');
   }
+  form.onsubmit = handleSubmit;
 }
 
-function editarVenta(id) {
-  document.getElementById('detalleVentaId').textContent = id;
-  document.getElementById('detallesLoading').style.display = 'block';
-  document.getElementById('detallesContent').style.display = 'none';
-  abrirModal('modalDetalles');
+async function editarAdmin(id) {
+  document.getElementById('edicionVentaId').textContent = id;
+  document.getElementById('edicionLoading').style.display = 'none';
+  document.getElementById('edicionContent').style.display = 'block';
+  const nuevoPassword = document.getElementById('edicionPassword');
+  const nuevoNombre = document.getElementById('edicionEstado');
+
+  const form = document.getElementById('formEdicion');
+
+  abrirModal('modalEdicion');
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    try {
+      const response = await fetch(`${API_BASE}/usuarios/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ nombre: nuevoNombre.value, password: nuevoPassword.value })
+      });
+
+      const data = await response.json();
+
+      if (data.status === 200) {
+        showAlert('Administrador actualizado correctamente', 'success');
+        cerrarModal('modalEdicion');
+        await cargarAdmins();
+      } else {
+        showAlert('Error al actualizar el administrador: ' + data.errors[0], 'error');
+      }
+    } catch (error) {
+      console.error('Error al actualizar el estado:', error);
+      showAlert('Error al actualizar el admin: ' + error.message, 'error');
+    }
+  }
+
+  form.onsubmit = handleSubmit;
 }
 
-async function verDetalles(id) {
-  document.getElementById('detalleVentaId').textContent = id;
-  document.getElementById('detallesLoading').style.display = 'block';
-  document.getElementById('detallesContent').style.display = 'none';
-  abrirModal('modalDetalles');
+async function eliminarAdmin(id) {
+  console.log("🚀 ~ eliminarAdmin ~ id:", id)
 
-  try {
-    const response = await fetch(`${API_BASE}/ventas/${id}`);
-    const { data } = await response.json();
+  if (!confirm('¿Estás seguro de que deseas eliminar este administrador?')) {
+    return;
+  } else {
+    try {
+      const response = await fetch(`${API_BASE}/usuarios/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      const data = await response.json();
 
-    document.getElementById('detalleCliente').textContent = data.cliente_nombre || 'Invitado';
-    document.getElementById('detalleTotal').textContent = `$${Number(data.total).toLocaleString()}`;
-
-    const itemsBody = document.getElementById('detalleItems');
-    itemsBody.innerHTML = '';
-    data.items.forEach((item) => {
-      itemsBody.innerHTML += `
-        <tr>
-          <td>${item.titulo}</td>
-          <td>${item.cantidad}</td>
-          <td>$${Number(item.precio_unitario).toLocaleString()}</td>
-          <td>$${Number(item.subtotal).toLocaleString()}</td>
-        </tr>
-      `;
-    });
-
-    document.getElementById('detallesLoading').style.display = 'none';
-    document.getElementById('detallesContent').style.display = 'block';
-  } catch (error) {
-    console.error('Error al abrir el modal de detales:', error);
-    cerrarModal('modalDetalles');
+      if (data.status === 200) {
+        showAlert('Administrador eliminado correctamente', 'success');
+        await cargarAdmins();
+      } else {
+        showAlert('Error al eliminar el administrador: ' + data.errors[0], 'error');
+      }
+    } catch (error) {
+      console.error('Error al actualizar el estado:', error);
+      showAlert('Error al eliminar el admin: ' + error.message, 'error');
+    }
   }
 }
 
@@ -218,26 +226,21 @@ function volverDashboard() {
   window.location.href = '/api/admin/dashboard-view';
 }
 
-document.getElementById('filtroEstado').addEventListener('change', async (e) => {
-  const filtro = e.target.value;
-  await cargarVentas(filtro);
-});
-
 document.addEventListener('DOMContentLoaded', () => {
-  const tbody = document.getElementById('productosBody');
+  const tbody = document.getElementById('administradoresBody');
 
   tbody.addEventListener('click', async (e) => {
     const btn = e.target.closest('button');
     if (!btn) return;
 
-    const ventaId = btn.dataset.id;
-
-    if (btn.classList.contains('btn-ver-detalles')) {
-      await verDetalles(ventaId);
-    }
+    const id = btn.dataset.id;
 
     if (btn.classList.contains('btn-editar')) {
-      editarVenta(ventaId);
+      await editarAdmin(id);
+    }
+
+    if (btn.classList.contains('btn-eliminar')) {
+      await eliminarAdmin(id);
     }
   });
 });

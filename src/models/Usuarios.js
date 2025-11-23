@@ -1,9 +1,23 @@
 import pool from '../config/database.js';
 
 const UsuarioModel = {
-  getAll: async () => {
-    const [results] = await pool.query('SELECT * FROM usuarios');
-    return results;
+  getAll: async (page, limit) => {
+    const offset = (page - 1) * limit;
+
+    let query = 'SELECT * FROM usuarios LIMIT ? OFFSET ?';
+
+    let countQuery = 'SELECT COUNT(*) as total FROM usuarios';
+
+    const params = [limit, offset];
+
+    const [results] = await pool.query(query, params);
+
+    const [countResults] = await pool.query(countQuery);
+
+    return {
+      usuarios: results,
+      total: countResults[0].total
+    };
   },
   getById: async (id) => {
     const [results] = await pool.query('SELECT * FROM usuarios WHERE id = ?', [id]);
@@ -14,19 +28,19 @@ const UsuarioModel = {
     return results[0];
   },
   create: async (usuario) => {
-    const { nombre, email, password, admin = true } = usuario;
+    const { nombre, email, password, admin = true, createdBy, updatedBy } = usuario;
 
     const [result] = await pool.query(
-      'INSERT INTO usuarios (nombre, email, password, admin) VALUES (?, ?, ?, ?)',
-      [nombre, email, password, admin]
+      'INSERT INTO usuarios (nombre, email, password, admin, created_by, updated_by) VALUES (?, ?, ?, ?, ?, ?)',
+      [nombre, email, password, admin, createdBy, updatedBy]
     );
     return { id: result.insertId, ...usuario };
   },
-  update: async (id, usuario) => {
-    const { nombre, password } = usuario;
+  update: async (id, data) => {
+    const { nombre, password, updatedBy } = data;
     const [result] = await pool.query(
-      'UPDATE usuarios SET nombre = ?, password = ? WHERE id = ?',
-      [nombre, password, id]
+      'UPDATE usuarios SET nombre = ?, password = ?, updated_by = ? WHERE id = ?',
+      [nombre, password, updatedBy, id]
     );
     return result;
   },

@@ -23,7 +23,7 @@ const Venta = {
 
     return rows[0] || null;
   },
-  getVentasPaginated: async (page = 1, limit = 10, filters = {}) => {
+  getVentasPaginated: async (page, limit, filters = {}) => {
     const offset = (page - 1) * limit;
 
     let query = `

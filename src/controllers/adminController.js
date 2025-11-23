@@ -191,3 +191,11 @@ export const getVentasSemanales = async (req, res, next) => {
     next();
   }
 }
+
+export const administradores = async (req, res, next) => {
+  try {
+    res.render('administradores');
+  } catch (error) {
+    next();
+  }
+}
