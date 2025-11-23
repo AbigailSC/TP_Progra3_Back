@@ -37,10 +37,10 @@ const UsuarioModel = {
     return { id: result.insertId, ...usuario };
   },
   update: async (id, data) => {
-    const { nombre, password, updatedBy } = data;
+    const { nombre, password, updatedBy, createdBy } = data;
     const [result] = await pool.query(
-      'UPDATE usuarios SET nombre = ?, password = ?, updated_by = ? WHERE id = ?',
-      [nombre, password, updatedBy, id]
+      'UPDATE usuarios SET nombre = ?, password = ?, updated_by = ?, created_by = ? WHERE id = ?',
+      [nombre, password, updatedBy, createdBy, id]
     );
     return result;
   },

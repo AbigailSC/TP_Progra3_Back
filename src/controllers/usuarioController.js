@@ -1,6 +1,7 @@
 import UsuarioModel from "../models/Usuarios.js";
 import { sendResponse } from '../utils/customResponse.js';
 import { validatePaginationParams } from '../utils/pagination.js';
+import { hashPassword } from '../utils/passwordUtils.js';
 
 export const getAllUsuarios = async (req, res, next) => {
   try {
@@ -56,11 +57,15 @@ export const updateUsuario = async (req, res, next) => {
   try {
     const { id } = req.params;
     const usuarioData = req.body;
+
     const usuario = await UsuarioModel.getById(id);
     if (!usuario) {
       return sendResponse(res, 404, 'Usuario no encontrado');
     }
-    usuarioData.updatedBy = req.user.id;
+    usuarioData.updatedBy = req.usuario;
+    usuarioData.createdBy = req.usuario;
+    usuarioData.password = await hashPassword(usuarioData.password);
+
     const updatedUsuario = await UsuarioModel.update(id, usuarioData);
     return sendResponse(res, 200, 'Usuario actualizado correctamente', updatedUsuario);
   } catch (error) {

@@ -3,7 +3,6 @@ import { validarToken } from './validacionToken.js';
 
 let administradores = [];
 const API_BASE = '/api';
-let currentSubmitHandler = null;
 
 const crearAdminBtn = document.querySelector('.new-admin');
 const volverDashboardBtn = document.querySelector('.volver-dashboard');
@@ -149,19 +148,15 @@ async function editarAdmin(id) {
   document.getElementById('edicionVentaId').textContent = id;
   document.getElementById('edicionLoading').style.display = 'none';
   document.getElementById('edicionContent').style.display = 'block';
+  const nuevoPassword = document.getElementById('edicionPassword');
+  const nuevoNombre = document.getElementById('edicionEstado');
 
   const form = document.getElementById('formEdicion');
 
-  if (currentSubmitHandler) {
-    form.removeEventListener('submit', currentSubmitHandler);
-  }
-
   abrirModal('modalEdicion');
 
-  currentSubmitHandler = async function (event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    const nombre = document.getElementById('edicionNombre').value;
-    const password = document.getElementById('edicionPassword').value;
 
     try {
       const response = await fetch(`${API_BASE}/usuarios/${id}`, {
@@ -170,7 +165,7 @@ async function editarAdmin(id) {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        body: JSON.stringify({ nombre, password })
+        body: JSON.stringify({ nombre: nuevoNombre.value, password: nuevoPassword.value })
       });
 
       const data = await response.json();
@@ -187,10 +182,13 @@ async function editarAdmin(id) {
       showAlert('Error al actualizar el admin: ' + error.message, 'error');
     }
   }
-  form.addEventListener('submit', currentSubmitHandler);
+
+  form.onsubmit = handleSubmit;
 }
 
 async function eliminarAdmin(id) {
+  console.log("🚀 ~ eliminarAdmin ~ id:", id)
+
   if (!confirm('¿Estás seguro de que deseas eliminar este administrador?')) {
     return;
   } else {
