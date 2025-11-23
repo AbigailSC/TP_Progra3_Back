@@ -2,7 +2,7 @@ import VentaModel from '../models/Venta.js';
 import CarritoModel from '../models/Carrito.js';
 import CarritoItemsModel from '../models/CarritoItems.js';
 import { sendResponse } from '../utils/customResponse.js';
-import { validateVentas } from '../utils/validations.js'
+import { validateVentas, validateVentasEstado } from '../utils/validations.js'
 import { validatePaginationParams, validateOrderBy, validateOrder, VENTA_ORDER_FIELDS } from '../utils/pagination.js';
 
 export const createVenta = async (req, res, next) => {
@@ -94,6 +94,30 @@ export const getVentasPaginated = async (req, res, next) => {
         hasPrevPage: hasPrevPage
       }
     });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export const updateVentaEstado = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { estado } = req.body;
+
+    const errors = validateVentasEstado(estado);
+
+    if (errors.length > 0) {
+      return sendResponse(res, 400, 'Errores de validación', errors);
+    }
+
+    const venta = await VentaModel.getById(id);
+
+    if (!venta) {
+      return sendResponse(res, 404, 'Venta no encontrada');
+    }
+    await VentaModel.updateEstado(id, estado.toLowerCase());
+
+    return sendResponse(res, 200, 'Estado de la venta actualizado con éxito');
   } catch (error) {
     next(error);
   }

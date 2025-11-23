@@ -12,9 +12,9 @@ VALUES ('Remeras'),('Buzos');
 -- Password para todos: Admin123!
 
 INSERT INTO usuarios (nombre, email, password, admin) VALUES
-    ('Juan Administrador', 'admin@autoservicio.com', '$2a$12$Gq2Hu.4U620oWdKaR4TCOub0sLGDQ0gAk4T8z9xk8/hhO1Ojq9OB6', TRUE),
-    ('María González', 'maria@autoservicio.com', '$2a$12$Gq2Hu.4U620oWdKaR4TCOub0sLGDQ0gAk4T8z9xk8/hhO1Ojq9OB6', TRUE),
-    ('Ana López', 'ana@autoservicio.com', '$2a$12$Gq2Hu.4U620oWdKaR4TCOub0sLGDQ0gAk4T8z9xk8/hhO1Ojq9OB6', TRUE)
+    ('Juan Administrador', 'admin@autoservicio.com', '$2a$12$Gq2Hu.4U620oWdKaR4TCOub0sLGDQ0gAk4T8z9xk8/hhO1Ojq9OB6', TRUE, 1, 1),
+    ('María González', 'maria@autoservicio.com', '$2a$12$Gq2Hu.4U620oWdKaR4TCOub0sLGDQ0gAk4T8z9xk8/hhO1Ojq9OB6', TRUE, 1, 1),
+    ('Ana López', 'ana@autoservicio.com', '$2a$12$Gq2Hu.4U620oWdKaR4TCOub0sLGDQ0gAk4T8z9xk8/hhO1Ojq9OB6', TRUE, 1, 2)
 ON DUPLICATE KEY UPDATE nombre=nombre;
 
 -- ========================================

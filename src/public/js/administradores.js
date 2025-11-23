@@ -165,49 +165,17 @@ async function exportarReporte(e) {
   }
 }
 
-async function editarVenta(id) {
-  document.getElementById('edicionVentaId').textContent = id;
-  document.getElementById('edicionLoading').style.display = 'none';
-  document.getElementById('edicionContent').style.display = 'block';
-
-  const estadoSelect = document.getElementById('edicionEstado');
-  const form = document.getElementById('formEdicion');
-
-  abrirModal('modalEdicion');
-
-  async function handleSubmit(event) {
-    event.preventDefault();
-    const nuevoEstado = estadoSelect.value;
-
-    try {
-      const response = await fetch(`${API_BASE}/ventas/${id}/estado`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({ estado: nuevoEstado })
-      });
-
-      if (response.ok) {
-        showAlert('Estado actualizado correctamente', 'success');
-        cerrarModal('modalEdicion');
-        await cargarVentas();
-      } else {
-        const error = await response.json();
-        throw new Error(error.message || 'Error al actualizar el estado');
-      }
-    } catch (error) {
-      console.error('Error al actualizar el estado:', error);
-      showAlert('Error al actualizar el estado: ' + error.message, 'error');
-    }
-  }
-
-  form.onsubmit = handleSubmit;
+function editarVenta(id) {
+  document.getElementById('detalleVentaId').textContent = id;
+  document.getElementById('detallesLoading').style.display = 'block';
+  document.getElementById('detallesContent').style.display = 'none';
+  abrirModal('modalDetalles');
 }
 
 async function verDetalles(id) {
   document.getElementById('detalleVentaId').textContent = id;
+  document.getElementById('detallesLoading').style.display = 'block';
+  document.getElementById('detallesContent').style.display = 'none';
   abrirModal('modalDetalles');
 
   try {
@@ -269,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (btn.classList.contains('btn-editar')) {
-      await editarVenta(ventaId);
+      editarVenta(ventaId);
     }
   });
 });

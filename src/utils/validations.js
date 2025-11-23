@@ -278,3 +278,14 @@ export const validateVentas = (idCarrito, metodoPago, notas) => {
 
   return errors;
 }
+
+export const validateVentasEstado = (estado) => {
+  const errors = [];
+  const estados = ['pendiente', 'procesando', 'completado', 'cancelado'];
+  if (!Validator.notEmpty(estado)) {
+    errors.push('El estado es obligatorio');
+  } else if (!estados.includes(estado.toLowerCase())) {
+    errors.push('El estado de la venta debe ser ("pendiente", "procesando", "completado" o "cancelado")')
+  }
+  return errors;
+}
