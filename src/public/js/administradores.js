@@ -11,7 +11,35 @@ const volverDashboardBtn = document.querySelector('.volver-dashboard');
 window.addEventListener('DOMContentLoaded', async () => {
   const usuarioValido = await validarToken();
   if (usuarioValido) {
+    const tbody = document.getElementById('administradoresBody');
+    const paginacionContainer = document.getElementById('paginacion');
+
     await cargarAdmins();
+
+    paginacionContainer.addEventListener('click', (e) => {
+      if (e.target.classList.contains('btn-paginacion')) {
+        const page = parseInt(e.target.dataset.page);
+        const filtroActual = document.getElementById('filtroEstado')?.value || '';
+        cargarVentas(filtroActual, page);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+
+    tbody.addEventListener('click', async (e) => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+
+      const id = btn.dataset.id;
+
+      if (btn.classList.contains('btn-editar')) {
+        await editarAdmin(id);
+      }
+
+      if (btn.classList.contains('btn-eliminar')) {
+        await eliminarAdmin(id);
+      }
+    });
+
     crearAdminBtn.addEventListener('click', crearAdmin);
     volverDashboardBtn.addEventListener('click', volverDashboard);
   } else {
@@ -227,25 +255,6 @@ function cerrarModal(id) {
 function volverDashboard() {
   window.location.href = '/api/admin/dashboard-view';
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-  const tbody = document.getElementById('administradoresBody');
-
-  tbody.addEventListener('click', async (e) => {
-    const btn = e.target.closest('button');
-    if (!btn) return;
-
-    const id = btn.dataset.id;
-
-    if (btn.classList.contains('btn-editar')) {
-      await editarAdmin(id);
-    }
-
-    if (btn.classList.contains('btn-eliminar')) {
-      await eliminarAdmin(id);
-    }
-  });
-});
 
 document.addEventListener('click', (e) => {
   if (e.target.classList.contains('btn-close-modal')) {

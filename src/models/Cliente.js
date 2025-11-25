@@ -31,6 +31,24 @@ const ClienteModel = {
         FROM clientes`
     );
     return results[0].total_clientes;
+  },
+  getAllClientsPaginated: async (page, limit) => {
+    const offset = (page - 1) * limit;
+
+    let query = 'SELECT * FROM clientes LIMIT ? OFFSET ?';
+
+    let countQuery = 'SELECT COUNT(*) as total FROM clientes';
+
+    const params = [limit, offset];
+
+    const [results] = await pool.query(query, params);
+
+    const [countResults] = await pool.query(countQuery);
+
+    return {
+      clientes: results,
+      total: countResults[0].total
+    };
   }
 };
 

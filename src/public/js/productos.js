@@ -232,9 +232,9 @@ function cerrarModal() {
   modal.classList.remove('show');
 }
 
-function cerrarSesion() {
+function volver() {
   localStorage.removeItem('token');
-  window.location.href = '/api/admin/login-view';
+  window.location.href = '/api/admin/dashboard-view';
 }
 
 // Cerrar modal al hacer clic fuera

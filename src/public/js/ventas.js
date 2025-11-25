@@ -10,7 +10,35 @@ const volverDashboardBtn = document.querySelector('.volver-dashboard');
 window.addEventListener('DOMContentLoaded', async () => {
   const usuarioValido = await validarToken();
   if (usuarioValido) {
+    const tbody = document.getElementById('productosBody');
+    const paginacionContainer = document.getElementById('paginacion');
+
     await cargarVentas();
+
+    paginacionContainer.addEventListener('click', (e) => {
+      if (e.target.classList.contains('btn-paginacion')) {
+        const page = parseInt(e.target.dataset.page);
+        const filtroActual = document.getElementById('filtroEstado')?.value || '';
+        cargarVentas(filtroActual, page);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+
+    tbody.addEventListener('click', async (e) => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+
+      const ventaId = btn.dataset.id;
+
+      if (btn.classList.contains('btn-ver-detalles')) {
+        await verDetalles(ventaId);
+      }
+
+      if (btn.classList.contains('btn-editar')) {
+        await editarVenta(ventaId);
+      }
+    });
+
     exportBtn.addEventListener('click', exportarReporte);
     volverDashboardBtn.addEventListener('click', volverDashboard);
   } else {
@@ -211,7 +239,12 @@ async function verDetalles(id) {
   abrirModal('modalDetalles');
 
   try {
-    const response = await fetch(`${API_BASE}/ventas/${id}`);
+    const response = await fetch(`${API_BASE}/ventas/${id}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
     const { data } = await response.json();
 
     document.getElementById('detalleCliente').textContent = data.cliente_nombre || 'Invitado';
@@ -253,25 +286,6 @@ function volverDashboard() {
 document.getElementById('filtroEstado').addEventListener('change', async (e) => {
   const filtro = e.target.value;
   await cargarVentas(filtro);
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-  const tbody = document.getElementById('productosBody');
-
-  tbody.addEventListener('click', async (e) => {
-    const btn = e.target.closest('button');
-    if (!btn) return;
-
-    const ventaId = btn.dataset.id;
-
-    if (btn.classList.contains('btn-ver-detalles')) {
-      await verDetalles(ventaId);
-    }
-
-    if (btn.classList.contains('btn-editar')) {
-      await editarVenta(ventaId);
-    }
-  });
 });
 
 document.addEventListener('click', (e) => {

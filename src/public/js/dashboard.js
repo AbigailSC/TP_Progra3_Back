@@ -1,3 +1,5 @@
+import { validarToken } from './validacionToken.js';
+
 const actividadReciente = [
   { tiempo: 'Hace 5 min', descripcion: 'Nueva venta registrada - $12,500' },
   { tiempo: 'Hace 15 min', descripcion: 'Producto "Buzo Negro" actualizado' },
@@ -5,33 +7,6 @@ const actividadReciente = [
   { tiempo: 'Hace 2 horas', descripcion: 'Stock actualizado para 5 productos' },
   { tiempo: 'Hace 3 horas', descripcion: 'Venta completada - Orden #1543' }
 ];
-
-async function validarAuthToken() {
-  const token = localStorage.getItem('token');
-  const response = await fetch('/api/auth/profile', {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    }
-  });
-
-  const data = await response.json();
-
-  if (data.status !== 401) {
-    const adminData = {
-      nombre: data.data.nombre,
-      email: data.data.email
-    };
-    document.getElementById('admin-nombre').textContent = adminData.nombre;
-    document.getElementById('admin-email').textContent = adminData.email;
-    document.getElementById('admin-inicial').textContent = adminData.nombre.charAt(0);
-    return true;
-  } else {
-    return false;
-  }
-}
-
 function generarUltimos7dais() {
   const dias = [];
   const nombresDias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
@@ -121,12 +96,27 @@ async function cargarEstadisticas() {
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
-  const authValid = await validarAuthToken();
-  if (!authValid) {
+  const usuarioValido = await validarToken();
+
+  if (usuarioValido) {
+    const adminData = {
+      nombre: data.data.nombre,
+      email: data.data.email
+    };
+    document.getElementById('admin-nombre').textContent = adminData.nombre;
+    document.getElementById('admin-email').textContent = adminData.email;
+    document.getElementById('admin-inicial').textContent = adminData.nombre.charAt(0);
+
+    renderChart();
+    //renderActivity();
+    cargarEstadisticas();
+  } else {
     window.location.href = '/api/admin/login-view';
     return;
   }
-  renderChart();
-  //renderActivity();
-  cargarEstadisticas();
+});
+
+document.getElementById('logout-btn').addEventListener('click', () => {
+  localStorage.removeItem('token');
+  window.location.href = '/api/admin/login-view';
 });
