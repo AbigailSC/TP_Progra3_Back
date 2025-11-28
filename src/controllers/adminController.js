@@ -206,3 +206,11 @@ export const clientes = async (req, res, next) => {
     next();
   }
 }
+
+export const createProducto = async (req, res, next) => {
+  try {
+    res.render('producto-form');
+  } catch (error) {
+    next();
+  }
+};

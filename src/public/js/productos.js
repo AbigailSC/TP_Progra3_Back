@@ -132,7 +132,7 @@ function mostrarProductos() {
 }
 
 function agregarProducto() {
-  window.location.href = '/api/admin/producto-form';
+  window.location.href = '/api/admin/crear-producto-view';
 }
 
 function editarProducto(id) {

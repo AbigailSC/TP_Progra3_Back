@@ -25,3 +25,24 @@ body {
 #tableContainer {
   overflow-x: auto;
 }
+
+#crearProducto {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 70%;
+}
+
+.container__submit-product {
+  display: flex;
+  gap: 60px;
+  padding: 20px 0px;
+}
+
+.container__img-product {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 30%;
+}
+

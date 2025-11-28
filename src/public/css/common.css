@@ -25,6 +25,7 @@ body {
     font-size: 14px;
     font-weight: bold;
     transition: opacity 0.2s;
+    
 }
 
 .btn:hover {

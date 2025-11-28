@@ -17,8 +17,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     paginacionContainer.addEventListener('click', (e) => {
       if (e.target.classList.contains('btn-paginacion')) {
         const page = parseInt(e.target.dataset.page);
-        const filtroActual = document.getElementById('filtroEstado')?.value || '';
-        cargarVentas(filtroActual, page);
+        cargarClientes(page);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     });
