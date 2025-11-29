@@ -23,8 +23,14 @@ export const checkout = async (req, res, next) => {
     for (const item of items) {
       const producto = await ProductoModel.getById(item.id);
       if (producto) {
+        if (producto.stock < item.cantidad) {
+          return sendResponse(res, 400, `Stock insuficiente para "${producto.titulo}". Disponible: ${producto.stock}`);
+        }     
         await CarritoItemsModel.create(carritoId, item.id, item.cantidad, producto.precio);
         total += producto.precio * item.cantidad;
+        
+        // Descontar stock del producto
+        await ProductoModel.update(item.id, { stock: producto.stock - item.cantidad });
       }
     }
 
