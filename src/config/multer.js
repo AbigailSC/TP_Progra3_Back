@@ -1,6 +1,6 @@
 import multer from 'multer';
 
-const allowedExtensions = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif'];
+const allowedExtensions = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif', 'image/webp'];
 
 const storage = multer.memoryStorage();
 
