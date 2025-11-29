@@ -43,7 +43,7 @@ async function cargarProductos() {
 
   try {
     const token = localStorage.getItem('token');
-    const response = await fetch(`${API_BASE}/productos`, {
+    const response = await fetch(`${API_BASE}/productos?activo=all`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
