@@ -207,10 +207,23 @@ export const clientes = async (req, res, next) => {
   }
 }
 
-export const createProducto = async (req, res, next) => {
+export const productoForm = async (req, res, next) => {
   try {
-    res.render('producto-form');
+    const { id } = req.query;
+    const tipos = await TipoModel.getAll();
+    
+    let producto = null;
+    let modo = 'crear';
+    
+    if (id) {
+      producto = await ProductoModel.getById(id);
+      if (producto) {
+        modo = 'editar';
+      }
+    }
+    
+    res.render('producto-form', { producto, tipos, modo });
   } catch (error) {
-    next();
+    next(error);
   }
 };

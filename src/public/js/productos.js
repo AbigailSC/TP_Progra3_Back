@@ -132,7 +132,7 @@ function mostrarProductos() {
 }
 
 function agregarProducto() {
-  window.location.href = '/api/admin/crear-producto-view';
+  window.location.href = '/api/admin/producto-form';
 }
 
 function editarProducto(id) {
@@ -140,9 +140,11 @@ function editarProducto(id) {
 }
 
 function confirmarEliminar(id) {
+  const producto = productos.find(p => p.id === id);
+  const nombreProducto = producto ? producto.titulo : 'este producto';
   mostrarModal(
     'Confirmar eliminación',
-    '¿Está seguro de que desea eliminar este producto? El producto pasará a estado inactivo.',
+    `¿Está seguro de que desea eliminar "${nombreProducto}"? El producto pasará a estado inactivo.`,
     () => eliminarProducto(id)
   );
 }
