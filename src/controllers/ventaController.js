@@ -1,9 +1,49 @@
 import VentaModel from '../models/Venta.js';
 import CarritoModel from '../models/Carrito.js';
 import CarritoItemsModel from '../models/CarritoItems.js';
+import ProductoModel from '../models/Producto.js';
 import { sendResponse } from '../utils/customResponse.js';
 import { validateVentas, validateVentasEstado } from '../utils/validations.js'
 import { validatePaginationParams, validateOrderBy, validateOrder, VENTA_ORDER_FIELDS } from '../utils/pagination.js';
+
+// Checkout simple: recibe items del carrito y crea la venta
+export const checkout = async (req, res, next) => {
+  try {
+    const { items, metodoPago } = req.body;
+
+    if (!items || items.length === 0) {
+      return sendResponse(res, 400, 'El carrito está vacío');
+    }
+
+    // Crear carrito
+    const carritoId = await CarritoModel.create(null);
+
+    // Agregar items y calcular total
+    let total = 0;
+    for (const item of items) {
+      const producto = await ProductoModel.getById(item.id);
+      if (producto) {
+        await CarritoItemsModel.create(carritoId, item.id, item.cantidad, producto.precio);
+        total += producto.precio * item.cantidad;
+      }
+    }
+
+    // Crear venta
+    const venta = await VentaModel.create({
+      idCarrito: carritoId,
+      idCliente: null,
+      total,
+      metodoPago: metodoPago || 'efectivo',
+      notas: null
+    });
+
+    await CarritoModel.updateEstado(carritoId, 'convertido');
+
+    return sendResponse(res, 201, 'Compra realizada', { ventaId: venta.id, total });
+  } catch (error) {
+    next(error);
+  }
+}
 
 export const createVenta = async (req, res, next) => {
   try {
