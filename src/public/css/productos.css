@@ -46,3 +46,6 @@ body {
   width: 30%;
 }
 
+.disabled {
+  cursor: not-allowed;
+}

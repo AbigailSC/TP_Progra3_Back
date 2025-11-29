@@ -95,7 +95,7 @@ export const validateCreateProducto = ({ titulo, precio, stock, descripcion, id_
     errors.push('El stock no puede ser negativo');
   }
 
-  if (!Validator.optional(descripcion, Validator.isString(descripcion))) {
+  if (!Validator.optional(descripcion, Validator.isString)) {
     errors.push('La descripción debe ser un texto');
   }
 

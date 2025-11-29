@@ -11,64 +11,66 @@
     <div class="header">
       <h1>Panel de Administración - Crear Producto</h1>
       <div class="actions">
-        <button class="btn btn-secondary" onclick="volver()">Volver</button>
+        <button class="btn btn-secondary volver-dashboard">Volver</button>
       </div>
     </div>
+    <div class="container">
+      <div id="alert" class="alert"></div>
+      <div class="container__submit-product">
+        <form id="crearProducto">
+          <div>
+            <label for="titulo">Título del Producto:</label>
+            <input
+              type="text"
+              id="titulo"
+              name="titulo"
+              required
+              placeholder="Ej: Remera asdasdas2 55"
+            />
+          </div>
 
-    <div class="container__submit-product">
-      <form id="crearProducto">
-        <div>
-          <label for="titulo">Título del Producto:</label>
-          <input
-            type="text"
-            id="titulo"
-            name="titulo"
-            required
-            placeholder="Ej: Remera asdasdas2 55"
+          <div>
+            <label for="precio">Precio:</label>
+            <input
+              type="number"
+              id="precio"
+              name="precio"
+              step="0.01"
+              required
+              placeholder="69999"
+              min="0"
+            />
+          </div>
+
+          <div>
+            <label for="stock">Stock Inicial:</label>
+            <input type="number" id="stock" name="stock" required placeholder="20" min="0" />
+          </div>
+
+          <div>
+            <label for="id_tipo">Tipo de Producto:</label>
+            <select name="id_tipo" id="id_tipo" required>
+              <option value="1">Remeras</option>
+              <option value="2">Buzos</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion" rows="4"></textarea>
+          </div>
+
+          <p id="mensajeError" style="color: red; display: none"></p>
+
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+        <div class="container__img-product">
+          <img
+            src="https://blocks.astratic.com/img/general-img-landscape.png"
+            alt="Imagen de prueba"
           />
+          <button class="btn btn-secondary btn-upload-img">Subir imagen</button>
         </div>
-
-        <div>
-          <label for="sku">SKU (Código único):</label>
-          <input type="text" id="sku" name="sku" required placeholder="Ej: REM-001" />
-        </div>
-
-        <div>
-          <label for="precio">Precio:</label>
-          <input
-            type="number"
-            id="precio"
-            name="precio"
-            step="0.01"
-            required
-            placeholder="69999"
-            min="0"
-          />
-        </div>
-
-        <div>
-          <label for="stock">Stock Inicial:</label>
-          <input type="number" id="stock" name="stock" required placeholder="20" min="0" />
-        </div>
-
-        <div>
-          <label for="id_tipo">Tipo de Producto:</label>
-          <select name="id_tipo" id="id_tipo" required>
-            <option value="1">Remeras</option>
-            <option value="2">Buzos</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="descripcion">Descripción:</label>
-          <textarea id="descripcion" name="descripcion" rows="4"></textarea>
-        </div>
-        <p id="mensajeError" style="color: red; display: none;"></p>
-        <button type="submit" class="btn btn-primary btn-upload-img">Guardar</button>
-      </form>
-      <div class="container__img-product">
-        <img src="https://blocks.astratic.com/img/general-img-landscape.png" alt="Imagen de prueba"/>
-        <button class="btn btn-secondary">Subir imagen</button>
       </div>
     </div>
 
