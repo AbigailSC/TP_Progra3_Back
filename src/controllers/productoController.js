@@ -24,7 +24,7 @@ export const createProducto = async (req, res, next) => {
 
 export const updateProducto = async (req, res, next) => {
   try {
-    const id = req.params;
+    const { id } = req.params;
     const productoData = req.body;
     const validationErrors = validateUpdateProducto(productoData);
     if (validationErrors.length > 0) {
@@ -43,7 +43,7 @@ export const updateProducto = async (req, res, next) => {
 
 export const deleteProducto = async (req, res, next) => {
   try {
-    const id = req.params;
+    const { id } = req.params;
     const deleted = await ProductoModel.delete(id);
     if (!deleted) {
       return sendResponse(res, 404, 'Producto no encontrado');
