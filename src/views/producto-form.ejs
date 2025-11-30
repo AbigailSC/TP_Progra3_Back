@@ -11,6 +11,7 @@
     <div class="header">
       <h1>Panel de Administración - <%= modo === 'editar' ? 'Editar' : 'Crear' %> Producto</h1>
       <div class="actions">
+        <button class="btn-theme" title="Cambiar tema">🌙</button>
         <a href="/api/admin/productos-view" class="btn btn-secondary">← Volver a Productos</a>
       </div>
     </div>
@@ -106,6 +107,7 @@
       </div>
     </div>
 
+    <script src="/js/tema.js"></script>
     <script type="module" src="/js/productoForm.js"></script>
   </body>
 </html>

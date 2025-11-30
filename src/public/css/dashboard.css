@@ -39,7 +39,7 @@ body {
   margin-bottom: 40px;
 }
 .stat-card {
-  background: white;
+  background: var(--bg-secondary);
   padding: 25px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -56,11 +56,11 @@ body {
 .stat-value {
   font-size: 2.5rem;
   font-weight: bold;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 5px;
 }
 .stat-label {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.95rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -85,7 +85,7 @@ body {
 }
 
 .action-card {
-  background: white;
+  background: var(--bg-secondary);
   padding: 30px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -108,13 +108,13 @@ body {
 }
 
 .action-card h3 {
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 10px;
   font-size: 1.4rem;
 }
 
 .action-card p {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.95rem;
 }
 
@@ -136,7 +136,7 @@ body {
 
 /* Chart Section */
 .chart-section {
-  background: white;
+  background: var(--bg-secondary);
   padding: 30px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -144,7 +144,7 @@ body {
 }
 
 .chart-section h3 {
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 20px;
   font-size: 1.5rem;
 }
@@ -181,7 +181,7 @@ body {
   right: 0;
   text-align: center;
   font-size: 0.85rem;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .bar-value {
@@ -191,7 +191,7 @@ body {
   right: 0;
   text-align: center;
   font-weight: bold;
-  color: #333;
+  color: var(--text-primary);
   font-size: 0.9rem;
 }
 
