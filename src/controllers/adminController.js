@@ -214,3 +214,12 @@ export const createProducto = async (req, res, next) => {
     next();
   }
 };
+
+export const actualizarProducto = async (req, res, next) => {
+  try {
+    const id = req.params;
+    res.render('actualizar-producto-form', { id });
+  } catch (error) {
+    next();
+  }
+};

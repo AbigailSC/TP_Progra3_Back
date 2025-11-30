@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Actualizar Producto - Panel Administrador</title>
+    <link rel="stylesheet" href="/css/common.css" />
+    <link rel="stylesheet" href="/css/productos.css" />
+  </head>
+  <body>
+    <div class="header">
+      <h1>Panel de Administración - Actualizar Producto</h1>
+      <div class="actions">
+        <button class="btn btn-secondary volver-dashboard">Volver</button>
+      </div>
+    </div>
+    <div class="container">
+      <div id="alert" class="alert"></div>
+      <div class="container__submit-product">
+        <form id="crearProducto">
+          <div>
+            <label for="titulo">Título del Producto:</label>
+            <input
+              type="text"
+              id="titulo"
+              name="titulo"
+              required
+              placeholder="Ej: Remera asdasdas2 55"
+            />
+          </div>
+
+          <div>
+            <label for="precio">Precio:</label>
+            <input
+              type="number"
+              id="precio"
+              name="precio"
+              step="0.01"
+              required
+              placeholder="69999"
+              min="0"
+            />
+          </div>
+
+          <div>
+            <label for="stock">Stock:</label>
+            <input type="number" id="stock" name="stock" required placeholder="20" min="0" />
+          </div>
+
+          <div>
+            <label for="id_tipo">Tipo de Producto:</label>
+            <select name="id_tipo" id="id_tipo" required>
+              <option value="1">Remeras</option>
+              <option value="2">Buzos</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion" rows="4"></textarea>
+          </div>
+
+          <p id="mensajeError" style="color: red; display: none"></p>
+
+          <button type="submit" class="btn btn-primary">Actualizar</button>
+        </form>
+        <div class="container__img-product">
+          <img
+            src="https://blocks.astratic.com/img/general-img-landscape.png"
+            alt="Imagen de prueba"
+          />
+          <button class="btn btn-secondary btn-upload-img">Subir imagen</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/js/actualizarProducto.js"></script>
+  </body>
+</html>
