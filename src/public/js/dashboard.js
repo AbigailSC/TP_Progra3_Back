@@ -85,26 +85,12 @@ async function cargarEstadisticas() {
 
 // Punto de entrada: verifica la autenticacion, carga datos del perfil e inicia el renderizado de la vista
 window.addEventListener('DOMContentLoaded', async () => {
-  const usuarioValido = await validarToken();
+  const usuario = await validarToken();
 
-  const response = await fetch('/api/auth/profile', {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
-    }
-  });
-
-  const data = await response.json();
-
-  if (usuarioValido) {
-    const adminData = {
-      nombre: data.data.nombre,
-      email: data.data.email
-    };
-    document.getElementById('admin-nombre').textContent = adminData.nombre;
-    document.getElementById('admin-email').textContent = adminData.email;
-    document.getElementById('admin-inicial').textContent = adminData.nombre.charAt(0);
+  if (usuario) {
+    document.getElementById('admin-nombre').textContent = usuario.nombre || 'Admin';
+    document.getElementById('admin-email').textContent = usuario.email || '';
+    document.getElementById('admin-inicial').textContent = (usuario.nombre || 'A').charAt(0);
 
     renderChart();
     cargarEstadisticas();
@@ -114,7 +100,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-document.getElementById('logout-btn').addEventListener('click', () => {
+document.querySelector('.btn-logout')?.addEventListener('click', () => {
   localStorage.removeItem('token');
   window.location.href = '/api/admin/login-view';
 });

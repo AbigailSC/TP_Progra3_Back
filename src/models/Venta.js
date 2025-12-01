@@ -46,12 +46,12 @@ const Venta = {
     }
 
     if (filters.precio_min) {
-      whereClauses.push('v.precio >= ?');
+      whereClauses.push('v.total >= ?');
       params.push(filters.precio_min);
     }
 
     if (filters.precio_max) {
-      whereClauses.push('v.precio <= ?');
+      whereClauses.push('v.total <= ?');
       params.push(filters.precio_max);
     }
 

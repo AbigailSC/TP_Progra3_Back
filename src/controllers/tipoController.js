@@ -1,7 +1,7 @@
 import TipoModel from '../models/Tipo.js';
 import { sendResponse } from '../utils/customResponse.js';
 
-export const getAllTipos = async (req, res) => {
+export const getAllTipos = async (req, res, next) => {
   try {
     const tipos = await TipoModel.getAll();
 

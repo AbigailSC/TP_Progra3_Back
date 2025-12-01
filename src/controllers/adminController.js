@@ -4,6 +4,7 @@ import VentaModel from '../models/Venta.js';
 import ProductoModel from '../models/Producto.js';
 import TipoModel from '../models/Tipo.js';
 import ClienteModel from '../models/Cliente.js';
+import { sendResponse } from '../utils/customResponse.js';
 
 import { validatePaginationParams, validateOrderBy, validateOrder, VENTA_ORDER_FIELDS } from '../utils/pagination.js';
 import { getInfoVentasMes } from '../utils/ventasHelper.js';
@@ -93,7 +94,7 @@ export const getAllProductos = async (req, res, next) => {
       filters: req.query
     });
   } catch (error) {
-    next();
+    next(error);
   }
 }
 
@@ -135,7 +136,7 @@ export const exportVentas = async (req, res, next) => {
 
     res.send(excelBuffer);
   } catch (error) {
-    next();
+    next(error);
   }
 }
 
@@ -143,7 +144,7 @@ export const login = async (req, res, next) => {
   try {
     res.render('login');
   } catch (error) {
-    next();
+    next(error);
   }
 }
 
@@ -178,7 +179,7 @@ export const dashboard = async (req, res, next) => {
 
     res.render('dashboard', { total_ventas_mes, productos, cantidad_ventas_mes, clientes });
   } catch (error) {
-    next();
+    next(error);
   }
 }
 
@@ -187,7 +188,7 @@ export const getVentasSemanales = async (req, res, next) => {
     const ventasSemanales = await VentaModel.getTotalVentasSemanales();
     return res.json({ ventasSemanales });
   } catch (error) {
-    next();
+    next(error);
   }
 }
 
@@ -195,7 +196,7 @@ export const administradores = async (req, res, next) => {
   try {
     res.render('administradores');
   } catch (error) {
-    next();
+    next(error);
   }
 }
 
@@ -203,7 +204,7 @@ export const clientes = async (req, res, next) => {
   try {
     res.render('clientes');
   } catch (error) {
-    next();
+    next(error);
   }
 }
 
