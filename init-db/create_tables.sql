@@ -76,4 +76,4 @@ CREATE TABLE IF NOT EXISTS tipos(
     FOREIGN KEY (id_cliente) REFERENCES clientes(id),
     INDEX idx_estado (estado),
     INDEX idx_created (created_at)
-)
+);

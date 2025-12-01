@@ -140,7 +140,7 @@ INSERT INTO carrito_items(id_carrito, id_producto, cantidad, precio_unitario, su
     (8, 2, 1, 45000.00, 45000.00, '2024-11-20 13:22:00', '2024-11-20 13:22:00'),
     (8, 3, 1, 45000.00, 45000.00, '2024-11-20 13:24:00', '2024-11-20 13:24:00'),
     (8, 25, 1, 67800.00, 67800.00, '2024-11-20 13:28:00', '2024-11-20 13:28:00'),
-    (8, 27, 1, 54500.00, 54500.00, '2024-11-20 13:32:00', '2024-11-20 13:32:00');
+    (8, 26, 1, 68000.00, 68000.00, '2024-11-20 13:32:00', '2024-11-20 13:32:00');
 
 -- Carrito 9 (Cliente 9) - 3 productos - 29/11/2024
 INSERT INTO carrito_items(id_carrito, id_producto, cantidad, precio_unitario, subtotal, created_at, updated_at) VALUES
@@ -152,7 +152,7 @@ INSERT INTO carrito_items(id_carrito, id_producto, cantidad, precio_unitario, su
 INSERT INTO carrito_items(id_carrito, id_producto, cantidad, precio_unitario, subtotal, created_at, updated_at) VALUES
     (10, 8, 1, 68000.00, 68000.00, '2024-11-29 15:30:00', '2024-11-29 15:30:00'),
     (10, 21, 1, 5500.00, 5500.00, '2024-11-29 15:35:00', '2024-11-29 15:35:00'),
-    (10, 28, 1, 55200.00, 55200.00, '2024-11-29 15:40:00', '2024-11-29 15:40:00'),
+    (10, 26, 1, 68000.00, 68000.00, '2024-11-29 15:40:00', '2024-11-29 15:40:00'),
     (10, 6, 2, 35000.00, 70000.00, '2024-11-29 15:45:00', '2024-11-29 15:45:00');
 
 -- ========================================
@@ -167,4 +167,4 @@ INSERT INTO ventas(id_carrito, id_cliente, total, estado, metodo_pago, created_a
     (5, 5, 125000, 'completado', 'transferencia', '2024-11-11 11:15:00', '2024-11-11 11:15:00'),
     (6, 6, 204500, 'completado', 'efectivo', '2024-11-12 16:45:00', '2024-11-12 16:45:00'),
     (7, 7, 80500, 'completado', 'efectivo', '2024-11-18 09:30:00', '2024-11-18 09:30:00'),
-    (8, 8, 257300, 'procesando', 'transferencia', '2024-11-20 13:20:00', '2024-11-20 13:20:00');
+    (8, 8, 270800, 'procesando', 'transferencia', '2024-11-20 13:20:00', '2024-11-20 13:20:00');
