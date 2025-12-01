@@ -1,6 +1,5 @@
 export const getInfoVentasMes = (mesActual, mesAnterior, existeMesAnterior) => {
   const diferencia = mesActual - mesAnterior;
-
   let porcentaje;
 
   if (existeMesAnterior) {

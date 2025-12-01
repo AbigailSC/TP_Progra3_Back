@@ -1,13 +1,7 @@
 import { validarToken } from './validacionToken.js';
 
-const actividadReciente = [
-  { tiempo: 'Hace 5 min', descripcion: 'Nueva venta registrada - $12,500' },
-  { tiempo: 'Hace 15 min', descripcion: 'Producto "Buzo Negro" actualizado' },
-  { tiempo: 'Hace 1 hora', descripcion: 'Nuevo cliente registrado: María González' },
-  { tiempo: 'Hace 2 horas', descripcion: 'Stock actualizado para 5 productos' },
-  { tiempo: 'Hace 3 horas', descripcion: 'Venta completada - Orden #1543' }
-];
-function generarUltimos7dais() {
+// Genero la estructura base de los ultimos 7 días (fecha y nombre del dia) inicializados con monto 0.
+function generarUltimos7dias() {
   const dias = [];
   const nombresDias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 
@@ -25,6 +19,7 @@ function generarUltimos7dais() {
   return dias;
 }
 
+// Realizo la petición a la API para obtener los datos crudos de las ventas registradas en la semana.
 async function getVentasSemanales() {
   try {
     const token = localStorage.getItem('token');
@@ -42,9 +37,10 @@ async function getVentasSemanales() {
   }
 }
 
+// Combino el calendario de los últimos 7 días con los datos de la API para mapear los montos correctos por cada dia
 async function generarArrayVentas() {
   const ventasSemanales = await getVentasSemanales();
-  const ultimos7Dias = generarUltimos7dais();
+  const ultimos7Dias = generarUltimos7dias();
 
   const ventasMapeadas = ultimos7Dias.map((dia) => {
     const ventaEncontrada = ventasSemanales.find((venta) => {
@@ -61,6 +57,7 @@ async function generarArrayVentas() {
   return ventasMapeadas;
 }
 
+// Calculo las alturas proporcionales y genero el HTML dinamico para visualizar el grafico de barras en el DOM
 async function renderChart() {
   const ventasSemanales = await generarArrayVentas();
   const chartContainer = document.getElementById('ventas-chart');
@@ -77,7 +74,7 @@ async function renderChart() {
   }).join('');
 }
 
-
+// Función auxiliar para inicializar otros indicadores o estadísticas generales del dashboard.
 async function cargarEstadisticas() {
   try {
     console.log('Dashboard cargado');
@@ -86,6 +83,7 @@ async function cargarEstadisticas() {
   }
 }
 
+// Punto de entrada: verifica la autenticacion, carga datos del perfil e inicia el renderizado de la vista
 window.addEventListener('DOMContentLoaded', async () => {
   const usuario = await validarToken();
 
