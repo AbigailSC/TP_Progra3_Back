@@ -31,6 +31,10 @@ const ProductoModel = {
     const [rows] = await pool.query('SELECT * FROM productos WHERE id = ? AND activo = TRUE', [id]);
     return rows[0] || null;
   },
+  getByIdAdmin: async (id) => {
+    const [rows] = await pool.query('SELECT * FROM productos WHERE id = ?', [id]);
+    return rows[0] || null;
+  },
   updateImage: async (id, url_image) => {
     const [result] = await pool.query(
       'UPDATE productos SET url_image = ? WHERE id = ?',
@@ -51,8 +55,11 @@ const ProductoModel = {
     const params = [];
     const whereClauses = [];
 
-    whereClauses.push('activo = ?');
-    params.push(true);
+    // Si activo es 'all', traer todos. Si es undefined, traer solo activos
+    if (filters.activo !== 'all') {
+      whereClauses.push('activo = ?');
+      params.push(filters.activo !== undefined ? filters.activo : true);
+    }
 
     if (filters.id_tipo) {
       whereClauses.push('id_tipo = ?');

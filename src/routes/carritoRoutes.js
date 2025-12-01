@@ -4,7 +4,7 @@ import { createCarrito, getActiveCarrito, updateEstadoCarrito } from '../control
 const router = express.Router();
 
 router.post('/', createCarrito);
-router.get('/:cliente_id', getActiveCarrito);
+router.get('/:id', getActiveCarrito);
 router.put('/:id', updateEstadoCarrito);
 
 export default router;

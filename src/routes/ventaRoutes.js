@@ -1,9 +1,10 @@
 import express from 'express';
-import { createVenta, getVentaById, getVentasPaginated, updateVentaEstado } from '../controllers/ventaController.js';
+import { checkout, createVenta, getVentaById, getVentasPaginated, updateVentaEstado } from '../controllers/ventaController.js';
 import { authenticate } from '../middlewares/auth.js';
 
 const router = express.Router();
 
+router.post('/checkout', checkout);
 router.post('/', createVenta);
 router.get('/', getVentasPaginated);
 router.get('/:id', authenticate, getVentaById);

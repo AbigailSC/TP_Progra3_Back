@@ -24,7 +24,7 @@ export const createProducto = async (req, res, next) => {
 
 export const updateProducto = async (req, res, next) => {
   try {
-    const id = req.params;
+    const { id } = req.params;
     const productoData = req.body;
     const validationErrors = validateUpdateProducto(productoData);
     if (validationErrors.length > 0) {
@@ -43,7 +43,7 @@ export const updateProducto = async (req, res, next) => {
 
 export const deleteProducto = async (req, res, next) => {
   try {
-    const id = req.params;
+    const { id } = req.params;
     const deleted = await ProductoModel.delete(id);
     if (!deleted) {
       return sendResponse(res, 404, 'Producto no encontrado');
@@ -103,13 +103,24 @@ export const getAllProductos = async (req, res, next) => {
     const orderBy = validateOrderBy(req.query.order_by, PRODUCTO_ORDER_FIELDS);
     const order = validateOrder(req.query.order);
 
+    // Procesar filtro de activo: 'all' = todos, '1' = activos, '0' = inactivos
+    let activoFilter = undefined;
+    if (req.query.activo === 'all') {
+      activoFilter = 'all';
+    } else if (req.query.activo === '0') {
+      activoFilter = false;
+    } else if (req.query.activo === '1') {
+      activoFilter = true;
+    }
+
     const filters = {
       id_tipo: req.query.tipo ? parseInt(req.query.tipo) : null,
       search: req.query.buscar || null,
       precio_min: req.query.precio_min ? parseFloat(req.query.precio_min) : null,
       precio_max: req.query.precio_max ? parseFloat(req.query.precio_max) : null,
       orderBy: orderBy,
-      order: order
+      order: order,
+      activo: activoFilter
     };
 
     const { productos, total } = await ProductoModel.getProductosPaginated(page, limit, filters);

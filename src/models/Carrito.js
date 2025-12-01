@@ -1,7 +1,7 @@
 import pool from '../config/database.js';
 
 const CarritoModel = {
-  create: async (clienteId = null) => {
+  create: async (clienteId) => {
     const [result] = await pool.query(
       'INSERT INTO carritos (id_cliente) VALUES (?)',
       [clienteId]

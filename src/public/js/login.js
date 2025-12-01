@@ -1,6 +1,20 @@
 const loginForm = document.getElementById('loginForm');
 const alertBox = document.getElementById('alert');
 const btnLogin = document.getElementById('btnLogin');
+const btnAccesoRapido = document.getElementById('btnAccesoRapido');
+
+// Credenciales de prueba para acceso rápido
+const CREDENCIALES_TEST = {
+    email: 'admin@autoservicio.com',
+    password: 'Admin123!'
+};
+
+// Botón de acceso rápido 
+btnAccesoRapido.addEventListener('click', () => {
+    document.getElementById('email').value = CREDENCIALES_TEST.email;
+    document.getElementById('password').value = CREDENCIALES_TEST.password;
+    showAlert('Credenciales autocompletadas. Presiona "Ingresar"', 'success');
+});
 
 function showAlert(message, type = 'error') {
     alertBox.textContent = message;

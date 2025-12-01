@@ -20,8 +20,8 @@ export const createCarrito = async (req, res, next) => {
 
 export const getActiveCarrito = async (req, res, next) => {
   try {
-    const { cliente_id } = req.params;
-    const carrito = await CarritoModel.getActiveByCliente(cliente_id);
+    const { id } = req.params;
+    const carrito = await CarritoModel.getActiveByCliente(id);
     if (!carrito) {
       return sendResponse(res, 404, 'No se encontró un carrito activo para este cliente');
     }
