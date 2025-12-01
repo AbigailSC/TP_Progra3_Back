@@ -162,6 +162,8 @@ export const dashboard = async (req, res, next) => {
     const totalClientes = await ClienteModel.getTotalClients();
 
     const total_ventas_mes = getInfoVentasMes(totalVentasMesActual.total_vendido, totalVentasMesPasado.total_vendido, totalVentasMesPasado.cantidad_ventas > 0);
+    console.log("🚀 ~ dashboard ~ total_ventas_mes:", total_ventas_mes)
+
 
     const cantidad_ventas_mes = getInfoVentasMes(cantidadVentasMesActual, cantidadVentasMesPasado, cantidadVentasMesPasado > 0);
 

@@ -1,12 +1,5 @@
 import { validarToken } from './validacionToken.js';
 
-const actividadReciente = [
-  { tiempo: 'Hace 5 min', descripcion: 'Nueva venta registrada - $12,500' },
-  { tiempo: 'Hace 15 min', descripcion: 'Producto "Buzo Negro" actualizado' },
-  { tiempo: 'Hace 1 hora', descripcion: 'Nuevo cliente registrado: María González' },
-  { tiempo: 'Hace 2 horas', descripcion: 'Stock actualizado para 5 productos' },
-  { tiempo: 'Hace 3 horas', descripcion: 'Venta completada - Orden #1543' }
-];
 function generarUltimos7dais() {
   const dias = [];
   const nombresDias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
@@ -76,16 +69,6 @@ async function renderChart() {
     `;
   }).join('');
 }
-
-// function renderActivity() {
-//   const activityContainer = document.getElementById('actividad-container');
-//   activityContainer.innerHTML = actividadReciente.map(item => `
-//     <div class="activity-item">
-//       <div class="activity-time">${item.tiempo}</div>
-//       <div class="activity-description">${item.descripcion}</div>
-//     </div>
-//   `).join('');
-// }
 
 async function cargarEstadisticas() {
   try {
