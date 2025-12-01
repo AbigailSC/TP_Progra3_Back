@@ -84,15 +84,22 @@ async function cargarAdmins(pagina = 1) {
       throw new Error('Error al obtener los administradores');
     }
 
-    const { data } = await response.json();
+    const result = await response.json();
 
-    administradores = data?.usuarios || [];
+    administradores = result.data?.usuarios || [];
+    const pagination = result.data?.pagination;
 
-    mostrarAdmins();
-    renderPaginacion(data.pagination);
+    if (administradores.length === 0) {
+      emptyState.style.display = 'block';
+      tableContainer.style.display = 'none';
+    } else {
+      mostrarAdmins();
+      if (pagination) {
+        renderPaginacion(pagination);
+      }
+    }
   } catch (error) {
-    console.error('Error al cargar ventas:', error);
-    showAlert('Error al cargar los ventas', 'error');
+    showAlert('Error al cargar los administradores', 'error');
     emptyState.style.display = 'block';
   } finally {
     loading.style.display = 'none';
@@ -112,9 +119,7 @@ function mostrarAdmins() {
       <td>${admin.nombre}</td>
       <td>${admin.email}</td>
       <td>${new Date(admin.created_at).toLocaleDateString('es-AR')}</td>
-      <td>${new Date(admin.updated_at).toLocaleDateString('es-AR')}</td>
-      <td>${admin.created_by}</td>
-      <td>${admin.updated_by}</td>
+      <td>${new Date(admin.modified_at || admin.updated_at || admin.created_at).toLocaleDateString('es-AR')}</td>
       <td>
         <div style="display: flex; gap: 5px;">
           <button class="btn btn-primary btn-small btn-editar" data-id="${admin.id}">
@@ -157,17 +162,19 @@ async function crearAdmin() {
         },
         body: JSON.stringify({ nombre, email, password, admin: true })
       });
-      const { data } = await response.json();
+      const result = await response.json();
 
-      if (data.status === 201) {
+      if (result.status === 201) {
         showAlert('Administrador creado correctamente', 'success');
         cerrarModal('modalCreacion');
+
         await cargarAdmins();
       } else {
-        showAlert('Error al crear administrador: ' + data.errors[0], 'error');
+        const errorMsg = result.data?.errors?.[0] || result.message || 'Error desconocido';
+        showAlert('Error al crear administrador: ' + errorMsg, 'error');
       }
     } catch (error) {
-      console.error('Error al crear el admin:', error);
+      showAlert('Error al crear administrador: ' + error.message, 'error');
     }
   }
   form.onsubmit = handleSubmit;
@@ -211,7 +218,6 @@ async function editarAdmin(id) {
         showAlert('Error al actualizar el administrador: ' + data.errors[0], 'error');
       }
     } catch (error) {
-      console.error('Error al actualizar el estado:', error);
       showAlert('Error al actualizar el admin: ' + error.message, 'error');
     }
   }
@@ -238,7 +244,6 @@ async function eliminarAdmin(id) {
         showAlert('Error al eliminar el administrador: ' + data.errors[0], 'error');
       }
     } catch (error) {
-      console.error('Error al actualizar el estado:', error);
       showAlert('Error al eliminar el admin: ' + error.message, 'error');
     }
   }
