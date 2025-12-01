@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS tipos(
     telefono VARCHAR(20),
     email VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP 
     INDEX idx_nombre (nombre)
 ); CREATE TABLE productos(
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -44,9 +45,9 @@ CREATE TABLE IF NOT EXISTS tipos(
     id INT PRIMARY KEY AUTO_INCREMENT,
     id_cliente INT,
     estado ENUM('activo', 'abandonado', 'convertido') DEFAULT 'activo',
-    FOREIGN KEY(id_cliente) REFERENCES clientes(id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY(id_cliente) REFERENCES clientes(id),
     INDEX idx_estado (estado)
 ); CREATE TABLE IF NOT EXISTS carrito_items (
     id INT PRIMARY KEY AUTO_INCREMENT,
