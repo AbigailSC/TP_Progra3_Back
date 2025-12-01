@@ -1,18 +1,24 @@
 export async function validarToken() {
-  const token = localStorage.getItem('token');
-  const response = await fetch('/api/auth/profile', {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+    
+    const response = await fetch('/api/auth/profile', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    const data = await response.json();
+
+    if (data.status === 200) {
+      return data.data; // Retorna los datos del usuario
+    } else {
+      return null;
     }
-  });
-
-  const data = await response.json();
-
-  if (data.status !== 401) {
-    return true;
-  } else {
-    return false;
+  } catch (error) {
+    return null;
   }
 }

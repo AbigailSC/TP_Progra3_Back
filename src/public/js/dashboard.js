@@ -77,15 +77,6 @@ async function renderChart() {
   }).join('');
 }
 
-// function renderActivity() {
-//   const activityContainer = document.getElementById('actividad-container');
-//   activityContainer.innerHTML = actividadReciente.map(item => `
-//     <div class="activity-item">
-//       <div class="activity-time">${item.tiempo}</div>
-//       <div class="activity-description">${item.descripcion}</div>
-//     </div>
-//   `).join('');
-// }
 
 async function cargarEstadisticas() {
   try {
@@ -96,19 +87,14 @@ async function cargarEstadisticas() {
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
-  const usuarioValido = await validarToken();
+  const usuario = await validarToken();
 
-  if (usuarioValido) {
-    const adminData = {
-      nombre: data.data.nombre,
-      email: data.data.email
-    };
-    document.getElementById('admin-nombre').textContent = adminData.nombre;
-    document.getElementById('admin-email').textContent = adminData.email;
-    document.getElementById('admin-inicial').textContent = adminData.nombre.charAt(0);
+  if (usuario) {
+    document.getElementById('admin-nombre').textContent = usuario.nombre || 'Admin';
+    document.getElementById('admin-email').textContent = usuario.email || '';
+    document.getElementById('admin-inicial').textContent = (usuario.nombre || 'A').charAt(0);
 
     renderChart();
-    //renderActivity();
     cargarEstadisticas();
   } else {
     window.location.href = '/api/admin/login-view';
@@ -116,7 +102,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-document.getElementById('logout-btn').addEventListener('click', () => {
+document.querySelector('.btn-logout')?.addEventListener('click', () => {
   localStorage.removeItem('token');
   window.location.href = '/api/admin/login-view';
 });
