@@ -167,4 +167,4 @@ INSERT INTO ventas(id_carrito, id_cliente, total, estado, metodo_pago, created_a
     (5, 5, 125000, 'completado', 'transferencia', '2024-11-11 11:15:00', '2024-11-11 11:15:00'),
     (6, 6, 204500, 'completado', 'efectivo', '2024-11-12 16:45:00', '2024-11-12 16:45:00'),
     (7, 7, 80500, 'completado', 'efectivo', '2024-11-18 09:30:00', '2024-11-18 09:30:00'),
-    (8, 8, 257300, 'procesando', 'transferencia', '2024-11-20 13:20:00', '2024-11-20 13:20:00'),
+    (8, 8, 257300, 'procesando', 'transferencia', '2024-11-20 13:20:00', '2024-11-20 13:20:00');
