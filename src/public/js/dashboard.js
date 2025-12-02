@@ -100,7 +100,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-document.querySelector('.btn-logout')?.addEventListener('click', () => {
+document.querySelector('#logout-btn')?.addEventListener('click', () => {
   localStorage.removeItem('token');
   window.location.href = '/api/admin/login-view';
 });

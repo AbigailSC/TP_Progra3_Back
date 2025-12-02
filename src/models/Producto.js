@@ -32,7 +32,7 @@ const ProductoModel = {
     return rows[0] || null;
   },
   getByIdAdmin: async (id) => {
-    const [rows] = await pool.query('SELECT * FROM productos WHERE id = ?', [id]);
+    const [rows] = await pool.query('SELECT * FROM productos WHERE id_usuario = ?', [id]);
     return rows[0] || null;
   },
   updateImage: async (id, url_image) => {
