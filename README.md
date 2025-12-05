@@ -12,7 +12,7 @@ API REST para gestión de productos, carritos y ventas de un autoservicio.
 ### 1. Clonar el repositorio
 
 ```bash
-  git clone https://github.com/AbigailSC/TP_Progra3_Back.git autoservicio-api
+  git clone https://github.com/AbigailSC/Autoservicio_api.git autoservicio-api
   cd autoservicio-api
 ```
 
@@ -37,6 +37,7 @@ PMA_PORT=3306
 
 Y crear un archivo `.env` en la raíz del proyecto con las siguientes variables:
 
+```env
 DB_HOST=localhost
 DB_USER=tu_user
 DB_PASSWORD=tu_password
@@ -48,6 +49,7 @@ JWT_EXPIRES_IN=tiempo_expiracion_jwt
 CLOUDINARY_CLOUD_NAME=tu_cloud_name
 CLOUDINARY_API_KEY=tu_cloud_key
 CLOUDINARY_API_SECRET=tu_cloud_api_secret_key
+```
 
 ### 3. Levantar el proyecto por primera vez
 
